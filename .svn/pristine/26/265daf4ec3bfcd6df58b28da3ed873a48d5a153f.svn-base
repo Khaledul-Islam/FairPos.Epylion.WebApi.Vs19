@@ -1,0 +1,29 @@
+﻿using FairPos.Epylion.Service.Setups;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Setups
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class ItemListController : ControllerBase
+    {
+        private readonly IItemListService _itemList;
+
+        public ItemListController(IItemListService itemList)
+        {
+            _itemList = itemList;
+        }
+
+        [HttpGet]
+        public IActionResult GetItemList()
+        {
+            var response = _itemList.SelectAll();
+            return Ok(response);
+        }
+    }
+}

@@ -1,0 +1,54 @@
+﻿using FairPos.Epylion.Models.Requisition;
+using FairPos.Epyllion.Repository.Requisition;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Requisition
+{
+    public interface IAutoRequisitionService
+    {
+        List<AutoRequistionTemp> GetTempRequistionData(out string errMsg);
+        List<AutoRequistionTemp> GetTempRequistionDataByUser(string user, out string errMsg);
+        List<AutoRequistion> GetChallanByDateNonReject();
+        void GenerateRequistion(string userID, out string errMsg);
+        void RemoveAllTempRequistion(string userId);
+    }
+
+    public class AutoRequisitionService : IAutoRequisitionService
+    {
+        private readonly IAutoRequisitionRepository _repo;
+
+        public AutoRequisitionService(IAutoRequisitionRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public void GenerateRequistion(string userID, out string errMsg)
+        {
+            _repo.GenerateRequistion(userID, out errMsg);
+        }
+
+        public List<AutoRequistion> GetChallanByDateNonReject()
+        {
+            return _repo.GetChallanByDateNonReject();
+        }
+
+        public List<AutoRequistionTemp> GetTempRequistionData(out string errMsg)
+        {
+            return _repo.GetTempRequistionData(out errMsg);
+        }
+
+        public List<AutoRequistionTemp> GetTempRequistionDataByUser(string user, out string errMsg)
+        {
+            return _repo.GetTempRequistionDataByUser(user, out errMsg);
+        }
+
+        public void RemoveAllTempRequistion(string userId)
+        {
+            _repo.RemoveAllTempRequistion(userId);
+        }
+    }
+}

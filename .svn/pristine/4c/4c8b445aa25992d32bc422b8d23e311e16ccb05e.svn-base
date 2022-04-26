@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Models.Setups
+{
+    public class StyleSizeCoversition
+    {
+        public decimal ConversitionId { get; set; }
+        public string MainSBarcode { get; set; }
+        public string MainBarcode { get; set; }
+        public string sBarcode { get; set; }
+        public string Barcode { get; set; }
+    }
+}

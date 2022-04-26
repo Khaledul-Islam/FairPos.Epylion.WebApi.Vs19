@@ -1,0 +1,44 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Models.Transfer;
+using FairPos.Epyllion.Repository;
+using FairPos.Epyllion.Repository.Transfer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Transfer
+{
+    public interface IShopToShopService
+    {
+        List<TempStockTransfer> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID, string stocktype, string searchText = null);
+        bool SaveTempStockTransfer(Buy model);
+        string SaveStockTransfer(List<TempStockTransfer> model);
+    }
+
+    public class ShopToShopService : IShopToShopService
+    {
+        private readonly IShopToShopRepository _repo;
+
+        public ShopToShopService(IShopToShopRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public List<TempStockTransfer> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID, string stocktype, string searchText = null)
+        {
+            return _repo.GetsForDataTables(start, length, orderBy, ref msgs, UserID, ShopID, stocktype, searchText);
+        }
+
+        public string SaveStockTransfer(List<TempStockTransfer> model)
+        {
+            return _repo.SaveStockTransfer(model);
+        }
+
+        public bool SaveTempStockTransfer(Buy model)
+        {
+            return _repo.SaveTempStockTransfer(model);
+        }
+    }
+}

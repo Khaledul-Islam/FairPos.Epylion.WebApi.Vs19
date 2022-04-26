@@ -1,0 +1,72 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IApprivalCheckService
+    {
+        List<Supplier> GetACSupplierDDL();
+        List<BuyOrder> GetPendingPONo(string SupID, string ShopID);
+        List<BuyOrder> GetChallanDetails(string POno);
+        bool RemoveTempArrival(TempArrival model);
+        bool RemoveTempArrivalByID(string barCode);
+        List<TempArrival> GetTempArrival(string UserID);
+        List<TempArrival> GetTempArrivalByChallanNo(string chln);
+        bool SaveTempArrival(List<BuyOrder> model);
+    }
+
+    public class ApprivalCheckService : IApprivalCheckService
+    {
+        private readonly IApprivalCheckRepository _repo;
+
+        public ApprivalCheckService(IApprivalCheckRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public List<BuyOrder> GetChallanDetails(string POno)
+        {
+            return _repo.GetChallanDetails(POno);
+        }
+        public List<TempArrival> GetTempArrivalByChallanNo(string chln)
+        {
+            return _repo.GetTempArrivalByChallanNo(chln);
+        }
+        
+        public List<Supplier> GetACSupplierDDL()
+        {
+            return _repo.GetACSupplierDDL();
+        }
+
+        public List<BuyOrder> GetPendingPONo(string SupID, string ShopID)
+        {
+            return _repo.GetPendingPONo(SupID, ShopID);
+        }
+
+        public List<TempArrival> GetTempArrival(string UserID)
+        {
+            return _repo.GetTempArrival(UserID);
+        }
+
+        public bool RemoveTempArrival(TempArrival model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveTempArrivalByID(string barCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SaveTempArrival(List<BuyOrder> model)
+        {
+            return _repo.SaveTempArrival(model);
+        }
+    }
+}

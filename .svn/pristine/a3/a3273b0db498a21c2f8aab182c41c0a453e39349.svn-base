@@ -1,0 +1,36 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IDamageLossService
+    {
+        List<Buy> GetDamageProductsSupplier(string SupId, string ShopID);
+        List<Buy> GetMainProductsSupplier(string SupId, string ShopID);
+    }
+
+    public class DamageLossService : IDamageLossService
+    {
+        private readonly IDamageLossRepository _repo;
+
+        public DamageLossService(IDamageLossRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public List<Buy> GetDamageProductsSupplier(string SupId, string ShopID)
+        {
+            return _repo.GetDamageProductsSupplier(SupId, ShopID);
+        }
+
+        public List<Buy> GetMainProductsSupplier(string SupId, string ShopID)
+        {
+            return _repo.GetMainProductsSupplier(SupId, ShopID);
+        }
+    }
+}

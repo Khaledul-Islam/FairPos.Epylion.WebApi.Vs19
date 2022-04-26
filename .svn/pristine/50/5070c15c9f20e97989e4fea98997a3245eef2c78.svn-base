@@ -1,0 +1,40 @@
+﻿using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Sales
+{
+    public interface ISalesStaffRepository
+    {
+        bool saveManagementStaffTopUp(TopUp model);
+    }
+
+    public class SalesStaffRepository : BaseRepository, ISalesStaffRepository
+    {
+        public SalesStaffRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+         
+        }
+        public bool saveManagementStaffTopUp(TopUp model)
+        {
+            string prefix = DateTime.Now.ToString("yyyyMMdd");
+            string collectionNo = GetMaxIdWithPrfix2("CollectionNo", "000000", "000001", "StaffLedger", prefix);
+
+            StaffLedger ledger = new ()
+            {
+                CollectionNo = collectionNo,
+                EmpID = model.EmpID,
+                DrAmount = model.topup,
+                Description =model.desc,
+                CreatedBy = model.UserId,
+                CreatedDate = DateTime.Now.Date
+            };
+
+            var response = _dal.Insert<StaffLedger>(ledger, "", "Id", "", ref msg);
+            return response;
+        }
+    }
+}

@@ -1,0 +1,95 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    public interface IPurchaseOrderRepository
+    {
+        bool Insert(Employee model);
+        bool RemoveBuyOrderTemp(BuyOrderTemp model);
+        bool RemoveBuyOrderTempByID(string barCode);
+        decimal GetStockBySbarocde(string sBarcode);
+        List<BuyOrderTemp> GetBuyOrderTemps(string UserID);
+    }
+
+    public class PurchaseOrderRepository : BaseRepository, IPurchaseOrderRepository
+    {
+        public PurchaseOrderRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT [CmpIDX]
+                              ,[Chln]
+                              ,[SupID]
+                              ,[sBarCode]
+                              ,[BarCode]
+                              ,[BoxQty]
+                              ,[Qty]
+                              ,[sQty]
+                              ,[DiscPrcnt]
+                              ,[VATPrcnt]
+                              ,[PrdComm]
+                              ,[CPU]
+                              ,[RPU]
+                              ,[BuyDT]
+                              ,[EXPDT]
+                              ,[UserID]
+                              ,[PrdDescription]
+                              ,[BoxUOM]
+                              ,[UnitUOM]
+                              ,[DeliveryDate]
+                              ,[PrdID]
+                              ,[POPackQty]
+                              ,[PackUOM]
+                        ,CASE WHEN (ROW_NUMBER() OVER (ORDER BY CmpIDX)  =1)
+	                     THEN	(SELECT COUNT(*) FROM BuyOrderTemp) 
+	                     ELSE 0 END RecordCount
+                    from BuyOrderTemp";
+        }
+        public bool Insert(Employee model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BuyOrderTemp> GetBuyOrderTemps(string UserID)
+        {
+            query = baseQuery + $" where UserID='{UserID}'";
+            var response = _dal.Select<BuyOrderTemp>(query, ref msg).ToList();
+            return response;
+        }
+        public bool RemoveBuyOrderTemp(BuyOrderTemp model)
+        {
+            query = baseQuery + $" where UserID='{model.UserID}' AND BarCode='{model.BarCode}' ";
+            var obj = _dal.SelectFirstOrDefault<BuyOrderTemp>(query, ref msg);
+            if (obj == null)
+            {
+                return false;
+            }
+            bool response = _dal.Delete<BuyOrderTemp>(obj, "SupID", "", ref msg);
+            return response;
+        }
+        public decimal GetStockBySbarocde(string sBarcode)
+        {
+            decimal sum = 0;
+            string query = "select balQty from buy where sBarCode='" + sBarcode + "'";
+            var response = _dal.Select<Buy>(query, ref msg).ToList();
+            sum = Convert.ToDecimal(response.Sum(m => m.balQty).ToString());
+            return sum;
+        }
+        public bool RemoveBuyOrderTempByID(string barCode)
+        {
+
+            query = baseQuery + $" where BarCode='{barCode}' ";
+            var obj = _dal.SelectFirstOrDefault<BuyOrderTemp>(query, ref msg);
+            if (obj == null)
+            {
+                return false;
+            }
+            bool response = _dal.Delete<BuyOrderTemp>(obj, "BarCode", "", ref msg);
+            return response;
+        }
+    }
+}

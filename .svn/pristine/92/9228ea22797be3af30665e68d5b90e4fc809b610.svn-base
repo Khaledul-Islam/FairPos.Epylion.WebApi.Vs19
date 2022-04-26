@@ -1,0 +1,273 @@
+﻿using AutoMapper;
+using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Service;
+using FairPos.Epylion.Service.Setups;
+using FairPos.Epylion.WebApi.Vs19.ViewModel;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Setups
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class EmployeeProductController : ControllerBase
+    {
+        private readonly IEmployeeProductService _eEPrepo;
+        private readonly IProductService _pRepo;
+        private readonly IMapper _mapper;
+        private readonly IEmployeeService _empService;
+        private readonly IEmployeeImageService _employeeImage;
+
+
+        public EmployeeProductController(IEmployeeProductService eEPrepo, IProductService pRepo, IMapper mapper, IEmployeeService empService, IEmployeeImageService employeeImage)
+        {
+            _eEPrepo = eEPrepo;
+            _pRepo = pRepo;
+            _mapper = mapper;
+            _empService = empService;
+            _employeeImage = employeeImage;
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            try
+            {
+
+                var data = _eEPrepo.SelectAll();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult SelectedProduct()
+        {
+            try
+            {
+
+                var data = _pRepo.SelectAll();
+
+                List<EmployeeProduct> olist = new List<EmployeeProduct>();
+                foreach (var d in data)
+                {
+                    EmployeeProduct ep = new EmployeeProduct();
+                    ep.PrdID = d.PrdID;
+                    ep.ProductName = d.PrdName;
+                    ep.LimitQty = 0;
+
+                    olist.Add(ep);
+                }
+                return Ok(olist);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult GetDetailsById(string id)
+        {
+            try
+            {
+
+                var data = _eEPrepo.FindById(id);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+        [HttpGet]
+        public IActionResult GetEmployeeProductItem(string cusID)
+        {
+            var item = _eEPrepo.GetEmployeeProductItem(cusID);
+            return Ok(item);
+
+        }
+        [HttpGet]
+        public IActionResult GetEmployee(string cusID)
+        {
+            var ObjLimit = _eEPrepo.GetCreditLimit(cusID);
+            var empObj = _empService.FindById(cusID);
+            if (empObj == null)
+            {
+                return NoContent();
+            }
+            var imgObj = _employeeImage.FindById(cusID);
+
+            empObj.AvailableLimit = ObjLimit.AvailableLimit;
+            empObj.CreditLimit = ObjLimit.CreditLimit;
+            if (imgObj != null)
+            {
+                empObj.EmpImage = imgObj.EmpImage;
+            }
+            var item = _eEPrepo.GetEmployeeProductItem(cusID);//EmployeeProduct model
+
+            empObj.LstEmployeeProduct = item;
+            return Ok(empObj);
+
+        }
+        [HttpGet]
+        public IActionResult GetCreditLimit(string cusId)
+        {
+            try
+            {
+
+                var data = _eEPrepo.GetCreditLimit(cusId);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Update([FromBody] List<EmployeeProduct> request)
+        {
+            var empID = request.FirstOrDefault().EmpID;
+            var checkedItem = request.Where(a => a.Check == true).ToList();
+
+            List<EmployeeProduct> oList = new List<EmployeeProduct>();
+
+
+            foreach (var item in checkedItem)
+            {
+                EmployeeProduct ei = new EmployeeProduct();
+                ei.LimitQty = item.LimitQty;
+                ei.PrdID = item.PrdID;
+                ei.EmpID = empID;
+                oList.Add(ei);
+            }
+
+            if (oList.Count() == 0)
+            {
+                return BadRequest("No Record Found");
+            }
+            _eEPrepo.Delete(request.FirstOrDefault());
+
+            foreach (var d in oList)
+            {
+                _eEPrepo.Insert(d);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] EmployeeProduct request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.EmpPrdID.ToString()))
+                {
+                    return BadRequest("Unit of measure name is required");
+                }
+
+
+                var service = _eEPrepo.Update(request);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(string Name)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Name))
+                {
+                    return BadRequest("Unit of measure name is required");
+                }
+
+                var service = _eEPrepo.Delete(new EmployeeProduct { EmpPrdID = int.Parse(Name) });
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+        [HttpPost]
+        public DataTablesResponse GetForDataTable([FromBody] DataTablesRootObject dataTablesRootObject)
+        {
+            DataTablesResponse r = new DataTablesResponse();
+            try
+            {
+                string searchText = "";
+                if (dataTablesRootObject.search != null)
+                {
+                    searchText = dataTablesRootObject.search.value;
+                }
+
+
+                #region single sort code
+                string sortInformAtion = "";
+
+                if (dataTablesRootObject.order != null && dataTablesRootObject.order.Count > 0)
+                {
+                    if (dataTablesRootObject.columns != null && dataTablesRootObject.columns.Count > 0)
+                    {
+                        sortInformAtion = "ORDER BY " + dataTablesRootObject.columns[dataTablesRootObject.order[0].column].data + " " + dataTablesRootObject.order[0].dir;
+                    }
+                    //dataTablesRootObject.order[0].column
+                }
+                if (string.IsNullOrEmpty(sortInformAtion))
+                {
+                    sortInformAtion = "ORDER BY " + dataTablesRootObject.columns[0].data + " asc";
+                }
+                #endregion
+
+                string error = "";
+                List<Product> oListAll = _pRepo.GetsForDataTables(dataTablesRootObject.start, 1000000, sortInformAtion, ref error, searchText);
+
+                List<EmployeeProduct> olist = new List<EmployeeProduct>();
+                foreach (var d in oListAll)
+                {
+                    EmployeeProduct ep = new EmployeeProduct();
+                    ep.PrdID = d.PrdID;
+                    ep.ProductName = d.PrdName;
+                    ep.LimitQty = 0;
+
+                    olist.Add(ep);
+                }
+
+                r.data = olist;
+
+                r.draw = dataTablesRootObject.draw;
+                r.error = error;
+                if (oListAll != null && oListAll.Count > 0)
+                {
+                    r.recordsTotal = oListAll[0].RecordCount;
+                    r.recordsFiltered = oListAll[0].RecordFilter;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + ex.StackTrace);
+            }
+            return r;
+
+        }
+    }
+}

@@ -1,0 +1,34 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epyllion.Repository;
+using System.Collections.Generic;
+
+namespace FairPos.Epylion.Service
+{
+    public interface ILoginConferenceService
+    {
+        bool Insert(LoginConference model);
+        bool Delete(LoginConference model);
+        List<LoginConference> SelectAll();
+    }
+    public class LoginConferenceService : ILoginConferenceService
+    {
+        ILoginConferenceRepository repository;
+
+        public LoginConferenceService(ILoginConferenceRepository _repo)
+        {
+            repository = _repo;
+        }
+        public bool Insert(LoginConference model)
+        {
+            return repository.Insert(model);
+        }
+        public bool Delete(LoginConference model)
+        {
+            return repository.Delete(model);
+        }
+        public List<LoginConference> SelectAll()
+        {
+            return repository.SelectAll();
+        }
+    }
+}

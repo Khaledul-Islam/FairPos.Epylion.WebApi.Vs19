@@ -1,0 +1,54 @@
+﻿using FairPos.Epylion.Models.Sales;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Sales;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Sales
+{
+    public interface ISalesWorkerService
+    {
+        List<TempSalesOrder> TempSalesOrderList(string UserId, string CounterId, string stocktype);
+        TempSalesOrder TempSalesOrder(string UserId, string CounterId, string stocktype);
+        Employee GetEmployeeById(decimal empId);
+        Employee GetEmployeeByRFId(string rfid);
+        List<Ssummary> GetInvoiceByEmployee(decimal empId);
+    }
+    public class SalesWorkerService : ISalesWorkerService
+    {
+        private readonly ISalesWorkerRepository _repo;
+
+        public SalesWorkerService(ISalesWorkerRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public Employee GetEmployeeById(decimal empId)
+        {
+            return _repo.GetEmployeeById(empId);
+        }
+
+        public Employee GetEmployeeByRFId(string rfid)
+        {
+            return _repo.GetEmployeeByRFId(rfid);
+        }
+
+        public List<Ssummary> GetInvoiceByEmployee(decimal empId)
+        {
+            return _repo.GetInvoiceByEmployee( empId);
+        }
+
+        public TempSalesOrder TempSalesOrder(string UserId, string CounterId, string stocktype)
+        {
+            return _repo.TempSalesOrder(UserId, CounterId, stocktype);
+        }
+
+        public List<TempSalesOrder> TempSalesOrderList(string UserId, string CounterId, string stocktype)
+        {
+            return _repo.TempSalesOrderList(UserId, CounterId, stocktype);
+        }
+    }
+}

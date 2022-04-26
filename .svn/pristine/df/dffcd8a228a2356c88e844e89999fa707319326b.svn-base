@@ -1,0 +1,59 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Service.Operations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Operations
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class CircularPriceChangedController : ControllerBase
+    {
+        private readonly ICircularPriceChangedService _Service;
+
+        public CircularPriceChangedController(ICircularPriceChangedService Service)
+        {
+            _Service = Service;
+        }
+        [HttpPost]
+        public IActionResult Update([FromBody] CircularPriceChanged model)
+        {
+            if (model == null)
+            {
+                return NotFound();
+            }
+            var response = _Service.Update(model);
+
+            return Ok(response);
+        }
+            
+        [HttpGet]
+        public IActionResult GetPending()
+        {
+            var response = _Service.GetPending();
+            if (response == null)
+            {
+                return BadRequest("response null");
+            }
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public IActionResult GetSingle(string CPCNo)
+        {
+            var response = _Service.GetSingleDetails(CPCNo);
+           // var details = _Service.GetSingleDetails(CPCNo);
+
+            if (response == null)
+            {
+                return BadRequest("response null");
+            }
+
+            return Ok(response);
+        }
+    }
+}

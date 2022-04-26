@@ -1,0 +1,42 @@
+﻿using FairPos.Epylion.Service.Operations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Operations
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class DamageLossController : ControllerBase
+    {
+        private readonly IDamageLossService _service;
+
+        public DamageLossController(IDamageLossService service)
+        {
+            _service = service;
+        }
+        [HttpGet]
+        public IActionResult GetMainProductsSupplier(string SupId, string ShopID)
+        {
+            var response = _service.GetMainProductsSupplier(SupId, ShopID);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetDamageProductsSupplier(string SupId, string ShopID)
+        {
+            var response = _service.GetDamageProductsSupplier(SupId, ShopID);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+    }
+}

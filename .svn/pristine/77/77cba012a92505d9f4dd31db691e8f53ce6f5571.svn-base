@@ -1,0 +1,77 @@
+﻿using Dapper;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    public interface IItemConversionRepository
+    {
+        bool DeleteTempConversionStock(string UserID);
+        List<TempConversionStock> TempConvStockList();
+        List<Buy> GetProductsSupplier(string SupId);
+        Buy GetByBarcodeExp(string barcode);
+        List<StyleSizeCoversition> GetItemDetails(string ParentSbarcode, DateTime parentItemExpire);
+    }
+    public class ItemConversionRepository : BaseRepository, IItemConversionRepository
+    {
+        public ItemConversionRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = "";
+        }
+        public bool DeleteTempConversionStock(string UserID)
+        {
+            string query = "delete from TempConversionStock where UserName=@UserName SELECT @@ROWCOUNT";
+            var response = _dapper.Query<int>(query, new
+            {
+                @UserName = UserID
+            }).FirstOrDefault();
+            if (response > 0)
+            {
+                return true;
+            }
+            return false;
+
+        }
+
+        public Buy GetByBarcodeExp(string barcode)
+        {
+            string query = @"SP_GetByBarcodeExp '" + barcode + "' ";
+            var response = _dal.Select<Buy>(query, ref msg).FirstOrDefault();
+            var respose = _dal.Select<dynamic>(query, ref msg);
+            return response;
+        }
+
+        public List<StyleSizeCoversition> GetItemDetails(string ParentSbarcode, DateTime parentItemExpire)
+        {
+            string query = @"SELECT StyleSizeCoversition.ConversitionId, StyleSizeCoversition.MainSBarcode, StyleSizeCoversition.MainBarcode, 
+                                    StyleSizeCoversition.sBarcode, StyleSizeCoversition.Barcode, vStyleSize.ItemName, 
+                                    vStyleSize.UOMName, vStyleSize.ItemFullName, vStyleSize.ItemNameBangla, vStyleSize.ItemFullNameBangla,
+                                    vStyleSize.BoxUOMName, vStyleSize.BoxSize FROM StyleSizeCoversition INNER JOIN
+                                    vStyleSize ON StyleSizeCoversition.sBarcode = vStyleSize.sBarcode
+                            WHERE MainSBarcode='" + ParentSbarcode + "'";
+            var response = _dal.Select<StyleSizeCoversition>(query, ref msg).ToList();
+            return response;
+        }
+
+        public List<Buy> GetProductsSupplier(string SupId)
+        {
+            string query = @"SP_GetStockByOrgBarcode '" + SupId + "' ";
+            var respronse = _dal.Select<Buy>(query, ref msg).ToList();
+            var response = _dal.Select<Buy>(query, ref msg).Where(m => m.IsConversionItem = true).ToList();
+            var respose = _dal.Select<dynamic>(query, ref msg).ToList();
+            return response;
+        }
+
+        public List<TempConversionStock> TempConvStockList()
+        {
+            string query = "select * from TempConversionStock";
+            var response = _dal.Select<TempConversionStock>(query, ref msg).ToList();
+            return response;
+        }
+    }
+}

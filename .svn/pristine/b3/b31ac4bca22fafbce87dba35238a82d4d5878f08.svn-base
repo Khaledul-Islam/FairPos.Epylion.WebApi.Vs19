@@ -1,0 +1,55 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IItemConversionService
+    {
+        bool DeleteTempConversionStock(string UserID);
+        List<TempConversionStock> TempConvStockList();
+        List<Buy> GetProductsSupplier(string SupId);
+        Buy GetByBarcodeExp(string barcode);
+        List<StyleSizeCoversition> GetItemDetails(string ParentSbarcode, DateTime parentItemExpire);
+    }
+
+    public class ItemConversionService : IItemConversionService
+    {
+        private readonly IItemConversionRepository _repo;
+
+        public ItemConversionService(IItemConversionRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public bool DeleteTempConversionStock(string UserID)
+        {
+           return _repo.DeleteTempConversionStock(UserID);
+        }
+
+        public Buy GetByBarcodeExp(string barcode)
+        {
+            return _repo.GetByBarcodeExp(barcode);
+        }
+
+        public List<StyleSizeCoversition> GetItemDetails(string ParentSbarcode, DateTime parentItemExpire)
+        {
+            return _repo.GetItemDetails(ParentSbarcode, parentItemExpire);
+        }
+
+        public List<Buy> GetProductsSupplier(string SupId)
+        {
+            return _repo.GetProductsSupplier(SupId);
+        }
+
+        public List<TempConversionStock> TempConvStockList()
+        {
+            return _repo.TempConvStockList();
+        }
+    }
+}

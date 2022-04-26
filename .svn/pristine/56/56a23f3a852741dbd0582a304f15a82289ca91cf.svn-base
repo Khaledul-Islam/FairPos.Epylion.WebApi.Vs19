@@ -1,0 +1,43 @@
+﻿using FairPos.Epylion.Models.Common;
+using FairPos.Epylion.Models.Requisition;
+using FairPos.Epyllion.Repository.Requisition;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Requisition
+{
+    public interface IMonthlyBudgetService
+    {
+        bool SaveMonthlyBudget(MonthlyBudget budget, out string errMsg);
+        List<MonthlyBudget> GetShopBudget(int year, out string errMsg);
+        List<YearList> YearList();
+    }
+
+    public class MonthlyBudgetService : IMonthlyBudgetService
+    {
+        private readonly IMonthlyBudgetRepository _repo;
+
+        public MonthlyBudgetService(IMonthlyBudgetRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public List<MonthlyBudget> GetShopBudget(int year, out string errMsg)
+        {
+            return _repo.GetShopBudget(year,out errMsg);
+        }
+
+        public bool SaveMonthlyBudget(MonthlyBudget budget, out string errMsg)
+        {
+            return _repo.SaveMonthlyBudget(budget, out errMsg);
+        }
+
+        public List<YearList> YearList()
+        {
+            return _repo.YearList();
+        }
+    }
+}

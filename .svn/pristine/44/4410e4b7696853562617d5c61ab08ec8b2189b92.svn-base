@@ -1,0 +1,127 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    public interface IApprivalCheckRepository
+    {
+        List<Supplier> GetACSupplierDDL();
+        List<BuyOrder> GetPendingPONo(string SupID, string ShopID);
+        bool RemoveTempArrival(TempArrival model);
+        bool RemoveTempArrivalByID(string barCode);
+        List<TempArrival> GetTempArrival(string UserID);
+        List<TempArrival> GetTempArrivalByChallanNo(string chln);
+        bool SaveTempArrival(List<BuyOrder> model);
+        List<BuyOrder> GetChallanDetails(string POno);
+    }
+
+    public class ApprivalCheckRepository : BaseRepository, IApprivalCheckRepository
+    {
+        public ApprivalCheckRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = "select * from TempArrival";
+        }
+        public List<BuyOrder> GetChallanDetails(string POno)
+        {
+            string query = @"sp_getBuyOrderDetails '" + POno + "' ";
+            var response = _dal.Select<BuyOrder>(query, ref msg).ToList();
+            return response;
+        }
+        public List<Supplier> GetACSupplierDDL()
+        {
+            string query = "select SupID,Supname from Supplier  where SupID in (SELECT DISTINCT SupID FROM BuyOrder   WHERE  IS_ARRIVAL=0 AND IS_CANCEL=0)";
+            var response = _dal.Select<Supplier>(query, ref msg).ToList();
+            return response;
+        }
+
+        public List<BuyOrder> GetPendingPONo(string SupID, string ShopID)
+        {
+            string query = @"usp_BuyOrder_GetPOBySupID '" + SupID + "','" + ShopID + "' ";
+            var response = _dal.Select<BuyOrder>(query, ref msg).ToList();
+            return response;
+        }
+
+        public List<TempArrival> GetTempArrival(string UserID)
+        {
+            string Query = "select * from TempArrival where UserID='" + UserID + "'";
+            var response = _dal.Select<TempArrival>(Query, ref msg).ToList();
+            return response;
+        }
+        public List<TempArrival> GetTempArrivalByChallanNo(string chln)
+        {
+            string Query = "select * from TempArrival where Chln='" + chln + "'";
+            var response = _dal.Select<TempArrival>(Query, ref msg).ToList();
+            return response;
+        }
+
+        public bool RemoveTempArrival(TempArrival model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveTempArrivalByID(string barCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SaveTempArrival(List<BuyOrder> model)
+        {
+            bool response = false;
+
+
+
+            List<TempArrival> lstarrival = new List<TempArrival>();
+
+
+            foreach (var d in model)
+            {
+                TempArrival arrival = new TempArrival();
+                arrival.ArrivalQty = d.Qty - d.RcvArrivalQty;
+                arrival.BoxQty = d.BoxQty - d.RcvBoxQty;
+                arrival.BarCode = d.BarCode;
+                arrival.ItemFullName = d.ItemFullName;
+                arrival.BuyDT = DateTime.Now;
+                //arrival.Chln = cmbPONo.SelectedValue.ToString();
+                arrival.Chln = d.Chln;
+                arrival.CPU = d.CPU;
+                arrival.DiscPrcnt = d.DiscPrcnt;
+                //arrival.EXPDT will be set
+                arrival.GIFT_RATIO = 0;
+                arrival.GIFT_DESCRIPTION = "";
+                arrival.EXPDT = DateTime.Now.AddDays(30);
+
+                arrival.POBoxQty = d.BoxQty;
+                arrival.PoQty = d.Qty;
+                arrival.PrdComm = d.PrdComm;
+                arrival.RPU = d.RPU;
+                arrival.sBarCode = d.sBarCode;
+                arrival.SupID = d.SupID;
+                arrival.UserID = d.UserID;
+                arrival.VATPrcnt = d.VATPrcnt;
+
+                StyleSize ss = StyleSizeDetailsByBarcode(arrival.BarCode);
+                arrival.BoxUOM = ss.BOXUOMName;
+                arrival.UnitUOM = ss.UOMName;
+                arrival.PrvRcvQty = d.RcvArrivalQty;
+                arrival.PrvRcvBox = d.RcvBoxQty;
+                arrival.BoxSize = ss.BoxSize;
+                lstarrival.Add(arrival);
+            }
+            response = _dal.Insert<TempArrival>(lstarrival, "", "TempArrivalId", "", ref msg);
+            return response;
+        }
+        private StyleSize StyleSizeDetailsByBarcode(string barocde)
+        {
+            string query = "SELECT * FROM vStyleSize where Barcode='" + barocde + "'";
+            var data = _dal.Select<StyleSize>(query, ref msg).FirstOrDefault();
+            return data;
+        }
+    }
+}

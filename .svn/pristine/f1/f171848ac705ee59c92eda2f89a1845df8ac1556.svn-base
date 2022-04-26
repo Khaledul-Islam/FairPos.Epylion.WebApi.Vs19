@@ -1,0 +1,36 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Report;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Report
+{
+    public interface IReportService
+    {
+        List<TopUpReprintDtos> getCollectionNOStaffLedger(DateTime fromDate, DateTime toDate, string rfID);
+        List<string> GetPendingPrintedItems(DateTime fromDate, DateTime toDate, string rfId = "");
+    }
+
+    public class ReportService : IReportService
+    {
+        private readonly IReportRepository _repo;
+
+        public ReportService(IReportRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public List<TopUpReprintDtos> getCollectionNOStaffLedger(DateTime fromDate, DateTime toDate, string rfID)
+        {
+            return _repo.getCollectionNOStaffLedger(fromDate, toDate, rfID);
+        }
+
+        public List<string> GetPendingPrintedItems(DateTime fromDate, DateTime toDate, string rfId = "")
+        {
+            return _repo.GetPendingPrintedItems(fromDate, toDate, rfId);
+        }
+    }
+}

@@ -1,0 +1,15 @@
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\bin\Release\net5.0\FairPos.Epylion.Models.deps.json
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\bin\Release\net5.0\FairPos.Epylion.Models.dll
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\bin\Release\net5.0\ref\FairPos.Epylion.Models.dll
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\bin\Release\net5.0\FairPos.Epylion.Models.pdb
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\bin\Release\net5.0\FIK.DAL.dll
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\bin\Release\net5.0\FIK.DAL.pdb
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.csproj.AssemblyReference.cache
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.GeneratedMSBuildEditorConfig.editorconfig
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.AssemblyInfoInputs.cache
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.AssemblyInfo.cs
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.csproj.CoreCompileInputs.cache
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.csproj.CopyComplete
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.dll
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\ref\FairPos.Epylion.Models.dll
+D:\FairPos.Epylion.WebApi.Vs19\FairPos.Epylion.Models\obj\Release\net5.0\FairPos.Epylion.Models.pdb

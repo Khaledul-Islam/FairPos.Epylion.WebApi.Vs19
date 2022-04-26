@@ -1,0 +1,130 @@
+﻿using Dapper;
+using FairPos.Epylion.Models.Requisition;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Requisition
+{
+    public interface IAutoRequisitionRepository
+    {
+        List<AutoRequistionTemp> GetTempRequistionData(out string errMsg);
+        List<AutoRequistionTemp> GetTempRequistionDataByUser(string user, out string errMsg);
+        List<AutoRequistion> GetChallanByDateNonReject();
+        void GenerateRequistion(string userID, out string errMsg);
+        void RemoveAllTempRequistion(string userId);
+
+    }
+
+    public class AutoRequisitionRepository : BaseRepository, IAutoRequisitionRepository
+    {
+        public AutoRequisitionRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT [CmpIDX]
+                                  ,[Chln]
+                                  ,[SupID]
+                                  ,[sBarCode]
+                                  ,[BarCode]
+                                  ,[BoxQty]
+                                  ,[Qty]
+                                  ,[sQty]
+                                  ,[DiscPrcnt]
+                                  ,[VATPrcnt]
+                                  ,[PrdComm]
+                                  ,[CPU]
+                                  ,[RPU]
+                                  ,[BuyDT]
+                                  ,[EXPDT]
+                                  ,[UserID]
+                                  ,[PrdDescription]
+                                  ,[BoxUOM]
+                                  ,[UnitUOM]
+                                  ,[PrdID]
+                                  ,[POPackQty]
+                                  ,[PackUOM]
+                                  ,[BalQty]
+                                  ,[BoxSize]
+                                  ,[MinOrder]
+                                  ,[POPackSize]
+                                  ,[ActualBoxQty]
+                                  ,[Remarks]
+                              FROM [AutoRequistionTemp]";
+        }
+
+        public void GenerateRequistion(string userID, out string errMsg)
+        {
+            errMsg = string.Empty;
+            try
+            {
+                List<AutoRequistionTemp> olist = GetTempRequistionData(out string err);
+                if (olist != null)
+                {
+                    errMsg = "Another user alreay processing this record";
+                    return;
+                }
+                List<AutoRequistion> olistReq = GetChallanByDateNonReject();
+
+                if (olistReq != null)
+                {
+                    errMsg = "A requistion already made in this month";
+                    return;
+                }
+                string fromDate = DateTime.Now.AddDays(-30).ToShortDateString();
+                string toDate = DateTime.Now.ToShortDateString();
+                string query = "SP_GenerateAutoRequistion '" + fromDate + "','" + toDate + "','" + userID + "' ";
+                var response = _dapper.Execute(query);
+            }
+            catch (Exception e)
+            {
+                errMsg = e.Message;
+            }
+        }
+
+        public List<AutoRequistion> GetChallanByDateNonReject()
+        {
+            string fromDate = DateTime.Now.Month.ToString() + "/01/" + DateTime.Now.Year.ToString();
+            int lastDay = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+            string toDay = DateTime.Now.Month.ToString() + "/" + lastDay.ToString() + "/" + DateTime.Now.Year.ToString();
+            string query = @"select distinct(Chln) from AutoRequistion where BuyDT between '" + fromDate + "' and '" + toDay + "' and ApproveStatus !='REJECT'";
+            var data = _dal.Select<AutoRequistion>(query, ref msg);
+            if (data==null||data.Count <= 0)
+            {
+                return null;
+            }
+            return data;
+        }
+
+        public List<AutoRequistionTemp> GetTempRequistionData(out string errMsg)
+        {
+            errMsg = string.Empty;
+            var response = _dal.Select<AutoRequistionTemp>(baseQuery, ref msg);
+            if (response == null ||  response.Count == 0)
+            {
+                errMsg = "No record found.";
+                return null;
+            }
+            return response;
+
+        }
+
+        public List<AutoRequistionTemp> GetTempRequistionDataByUser(string user, out string errMsg)
+        {
+            errMsg = string.Empty;
+            var response = _dal.Select<AutoRequistionTemp>(baseQuery + " where UserID='" + user + "'", ref msg);
+            if (response==null||response.Count == 0)
+            {
+                errMsg = "No record found.";
+                return null;
+            }
+            return response;
+        }
+
+        public void RemoveAllTempRequistion(string userId)
+        {
+            string query = "delete  from AutoRequistionTemp where UserID='" + userId + "'";
+            _dapper.Execute(query);
+        }
+    }
+}

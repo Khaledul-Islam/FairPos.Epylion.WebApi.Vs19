@@ -1,0 +1,120 @@
+﻿using FairPos.Epylion.Models.Requisition;
+using FIK.DAL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Requisition
+{
+    public interface IRequisitionApprovalRepository
+    {
+        List<AutoRequistion> GetNonApprovedRequistion(string status,out string errMsg);
+        AutoRequistionTempApproval GetBychln(string id, out string errMsg);
+        List<AutoRequistion> AutoRequistionsApprovalLoad(out string msgg);
+        bool SaveApproveRequisition(List<AutoRequistion> olist, out string errMsg);
+    }
+
+    public class RequisitionApprovalRepository : BaseRepository, IRequisitionApprovalRepository
+    {
+        public RequisitionApprovalRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+
+        }
+
+        public List<AutoRequistion> AutoRequistionsApprovalLoad(out string msgg)
+        {
+            msgg = string.Empty;
+            try
+            {
+                var olist = GetNonApprovedRequistion("NEW", out string errMsg);
+                if (olist == null || olist.Count==0)
+                {
+                    msgg = "No Requisition Found";
+                    return null;
+                }
+                string UserID = olist.First().UserID;
+                string chln = "";
+                foreach (var d in olist)
+                {
+                    d.ApprovedBoxQty = d.ActualBoxQty;
+
+                    var temp = GetBychln(d.Chln, out string error);
+                    if (temp != null)
+                    {
+                        if (temp.UserId != d.UserID)
+                        {
+                            msgg="Another user processing this record";
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        chln = d.Chln;
+                    }
+                }
+                if (chln != "")
+                {
+                    AutoRequistionTempApproval temp2 = new();
+                    temp2.UserId = UserID;
+                    temp2.CreateDate = DateTime.Now;
+                    temp2.Chln = chln;
+                    var response = _dal.Insert<AutoRequistionTempApproval>(temp2, "", "", "", ref msg);
+                    if(response==false|| !string.IsNullOrEmpty(msg))
+                    {
+                        msgg = "Response false." + msg;
+                        return null;
+                    }
+                }
+                return olist;
+            }
+            catch(Exception e)
+            {
+                msgg = e.Message;
+                throw;
+            }
+            
+        }
+
+        public AutoRequistionTempApproval GetBychln(string id, out string errMsg)
+        {
+            errMsg = string.Empty;
+            string query = "select * from AutoRequistionTempApproval where Chln='" + id + "'";
+            var response = _dal.Select<AutoRequistionTempApproval>(query, ref msg).FirstOrDefault();
+            if (response == null)
+            {
+                errMsg = "No record found";
+                return null;
+            }
+            return response;
+        }
+        public List<AutoRequistion> GetNonApprovedRequistion(string status, out string errMsg)
+        {
+            errMsg = string.Empty;
+            string query = "select * from AutoRequistion where ApproveStatus='" + status + "'";
+            var response = _dal.Select<AutoRequistion>(query, ref msg).ToList();
+            if (response == null)
+            {
+                errMsg = "No record found";
+                return null;
+            }
+            return response;
+        }
+
+        public bool SaveApproveRequisition(List<AutoRequistion> olist, out string errMsg)
+        {
+            errMsg = string.Empty;
+            CompositeModel composite = new();
+            composite.AddRecordSet<AutoRequistion>(olist, OperationMode.Update, "", "ApprovedBoxQty,ApprovedBy,ApprovedDate,ApproveStatus", "BarCode,Chln", "");
+            composite.AddRecordSet<AutoRequistionTempApproval>(olist, OperationMode.Delete,"","", "UserId","");
+            var response = _dal.InsertUpdateComposite(composite, ref msg);
+            if(response==false || !string.IsNullOrEmpty(msg))
+            {
+                errMsg = msg;
+                return false;
+            }
+            return response;
+        }
+    }
+}

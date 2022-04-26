@@ -1,0 +1,44 @@
+﻿using Dapper;
+using FairPos.Epylion.Models.Sales;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Sales
+{
+    public interface ISalesOrderPrintRepository
+    {
+        List<string> PendingSalesOrder();
+        bool IS_SO_PRINTED(string so_no);
+    }
+    public class SalesOrderPrintRepository : BaseRepository, ISalesOrderPrintRepository
+    {
+        public SalesOrderPrintRepository(IDBConnectionProvider dBConnectionProvider ) : base(dBConnectionProvider)
+        {
+        }
+
+        public bool IS_SO_PRINTED(string so_no)
+        {
+            SALES_ORDER sales = new();
+            sales.IS_Print = true;
+            sales.SO_NO = so_no;
+            var response = _dal.Update<SALES_ORDER>(sales, "IS_Print", "SO_NO", "", ref msg);
+            if (!string.IsNullOrEmpty(msg))
+            {
+                return false;
+            }
+            return response;
+        }
+
+        public List<string> PendingSalesOrder()
+        {
+            string query = @"SELECT DISTINCT SO_NO FROM dbo.SALES_ORDER
+	                        WHERE IS_Print=0 AND IsCanceld=0  AND IS_APPROVED=0 and SalesStockType='Worker Stock' ";
+            //var response = _dal.Select<String>(query, ref msg).ToList();
+            var response = _dapper.Query<String>(query).ToList();
+            return response;
+        }
+    }
+}

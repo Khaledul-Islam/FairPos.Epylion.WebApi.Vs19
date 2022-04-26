@@ -1,0 +1,108 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Service.Operations;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Operations
+{
+    [Route("[controller]/[action]")]
+    [Authorize(Policy = nameof(Policy.Account))]
+    [ApiController]
+    public class PurchaseOrderController : ControllerBase
+    {
+        private readonly IPurchaseOrderService _poService;
+
+        public PurchaseOrderController(IPurchaseOrderService poService)
+        {
+            _poService = poService;
+        }
+        [HttpPost]
+        public IActionResult RemoveBuyOrderTemp([FromBody] BuyOrderTemp model)
+        {
+            if (model == null)
+            {
+                return NotFound();
+            }
+            bool response = _poService.RemoveBuyOrderTemp(model);
+
+            return Ok();
+        }
+        [HttpPost]
+        public IActionResult RemoveBuyOrderTempByID(string barCode)
+        {
+            if (barCode == null)
+            {
+                return NotFound();
+            }
+            bool response = _poService.RemoveBuyOrderTempByID(barCode);
+            if (!response)
+            {
+                return BadRequest();
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult CreateBuyOrderTemp([FromBody] BuyOrderTemp model)
+        {
+            if (model == null)
+            {
+                return NotFound();
+            }
+            bool response = _poService.Insert(model);
+            return Ok(response);
+        }
+        [HttpPost]
+        public IActionResult PurchaseOrder([FromBody] List<BuyOrderTemp> model)
+        {
+            if (model == null)
+            {
+                return NotFound();
+            }
+            bool response = _poService.PurchaseOrder(model);
+            return Ok();
+        }
+        [HttpGet]
+        public IActionResult SupplierbyID(string SupID)
+        {
+            var response = _poService.SupplierbyID(SupID);
+            if (response == null)
+            {
+                return BadRequest("response null");
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetActualStockBySbarocde(string sBarcode)
+        {
+            var response = _poService.GetActualStockBySbarocde(sBarcode);
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetBuyOrderTemps(string UserID)
+        {
+            var response = _poService.GetBuyOrderTemps(UserID);
+            if (response == null)
+            {
+                return BadRequest("response null");
+            }
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public IActionResult GetSupplierDDL()
+        {
+            var response = _poService.SupplierListDDL();
+            if (response == null)
+            {
+                return BadRequest("response null");
+            }
+            return Ok(response);
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "bf912ac6-f388-42aa-bf64-461b5986ccb5": {
+      "ProjectGuid": "bf912ac6-f388-42aa-bf64-461b5986ccb5",
+      "DisplayName": "FairPos.Epyllion.Repository",
+      "ColorIndex": 0
+    },
+    "d544d8f6-2fb7-4c02-b35c-e51b2c0f739c": {
+      "ProjectGuid": "d544d8f6-2fb7-4c02-b35c-e51b2c0f739c",
+      "DisplayName": "FairPos.Epylion.WebApi.Vs19",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

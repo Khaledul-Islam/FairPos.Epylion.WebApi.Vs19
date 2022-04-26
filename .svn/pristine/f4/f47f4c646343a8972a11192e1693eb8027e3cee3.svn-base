@@ -1,0 +1,87 @@
+﻿using FairPos.Epylion.Service.Operations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Operations
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class ItemConversionController : ControllerBase
+    {
+        private readonly IItemConversionService _service;
+
+        public ItemConversionController(IItemConversionService service)
+        {
+            _service = service;
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteTempConversionStock(string UserID)
+        {
+            if (string.IsNullOrEmpty(UserID))
+            {
+                return NotFound();
+            }
+            var response = _service.DeleteTempConversionStock(UserID);
+            if (response == false)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetByBarcodeExp(string barcode)
+        {
+            if (string.IsNullOrEmpty(barcode))
+            {
+                return NotFound();
+            }
+            var response = _service.GetByBarcodeExp(barcode);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public IActionResult GetItemDetails(string ParentSbarcode, DateTime parentItemExpire)
+        {
+
+            var response = _service.GetItemDetails(ParentSbarcode, parentItemExpire);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetProductsSupplier(string SupId)
+        {
+            if (string.IsNullOrEmpty(SupId))
+            {
+                return NotFound();
+            }
+            var response = _service.GetProductsSupplier(SupId);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult TempConcStockList()
+        {
+            var response = _service.TempConvStockList();
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+    }
+}

@@ -1,0 +1,239 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    /////////////////////////////////////////////////////////////////////////////////
+    //FileName: IPurchaseOrderRepository.cs
+    //FileType: C# Source file
+    //Author : SHUVO
+    //Created On : 10/10/2021
+    //Last Modified On : 
+    //Copy Rights : MediaSoft Data System LTD
+    //Description : Interface and Class for defining database related functions
+    /////////////////////////////////////////////////////////////////////////////////
+    public interface IPurchaseOrderRepository
+    {
+        bool Insert(BuyOrderTemp model);
+        bool PurchaseOrder(List<BuyOrderTemp> model);
+        bool RemoveBuyOrderTemp(BuyOrderTemp model);
+        bool RemoveBuyOrderTempByID(string barCode);
+        decimal GetActualStockBySbarocde(string sBarcode);
+        List<BuyOrderTemp> GetBuyOrderTemps(string UserID);
+        List<BuyOrderTemp> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string searchText = null);
+    }
+
+    public class PurchaseOrderRepository : BaseRepository, IPurchaseOrderRepository
+    {
+        public PurchaseOrderRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT [CmpIDX]
+                              ,[Chln]
+                              ,[SupID]
+                              ,[sBarCode]
+                              ,[BarCode]
+                              ,[BoxQty]
+                              ,[Qty]
+                              ,[sQty]
+                              ,[DiscPrcnt]
+                              ,[VATPrcnt]
+                              ,[PrdComm]
+                              ,[CPU]
+                              ,[RPU]
+                              ,[BuyDT]
+                              ,[EXPDT]
+                              ,[UserID]
+                              ,[PrdDescription]
+                              ,[BoxUOM]
+                              ,[UnitUOM]
+                              ,[DeliveryDate]
+                              ,[PrdID]
+                              ,[POPackQty]
+                              ,[PackUOM]
+                        ,CASE WHEN (ROW_NUMBER() OVER (ORDER BY CmpIDX)  =1)
+	                     THEN	(SELECT COUNT(*) FROM BuyOrderTemp) 
+	                     ELSE 0 END RecordCount
+                    from BuyOrderTemp";
+        }
+        public bool PurchaseOrder(List<BuyOrderTemp> model)
+        {
+            string chln = GetMaxIdWithPrfix2("Chln", "4", "0001", "BuyOrder", "PO/" + DateTime.Now.Year.ToString() + "/" + "KK" + "/");//KK is static ,,,shopid jabe
+            foreach(var d in model)
+            {
+                BuyOrder sts = new();
+                sts.BarCode = d.BarCode;
+                sts.sBarCode = d.sBarCode;
+                sts.Chln = chln;
+                sts.CmpIDX = sts.Chln + sts.BarCode + d.DeliveryDate.ToShortDateString();
+                sts.CPU = d.CPU;
+                sts.Qty = d.Qty;
+                sts.BoxQty = d.BoxQty;
+                sts.POPackQty = d.POPackQty;
+                sts.BuyDT = d.BuyDT;
+                sts.EXPDT = d.DeliveryDate;//conf
+                sts.RPU = d.RPU;
+                sts.SupID = d.SupID;
+                sts.PrdComm = d.PrdComm;
+                sts.DiscPrcnt = d.DiscPrcnt;
+                sts.VATPrcnt = 0;
+                sts.sQty = d.sQty;
+                sts.SupID = d.SupID;
+                sts.UserID = d.UserID;
+                sts.IS_ARRIVAL = false;
+                sts.IS_CANCEL = false;
+                sts.VatAmt = 0;
+                sts.QutRefNo = d.QtrefNo;
+                sts.PartialDelivery = d.PartialDelivery;
+                sts.MaturtyDays = d.MaturityDaysID.ToString();
+                sts.PaymentTerms = d.PaymentTermName;
+                sts.ShopID = d.ShopID;
+                _dal.Insert<BuyOrder>(sts, "", "", "", ref msg);
+
+            }
+            bool rersponse =_dal.Delete<BuyOrderTemp>(model.FirstOrDefault(), "UserID", "", ref msg);
+            return rersponse;
+        }
+        public bool Insert(BuyOrderTemp model)
+        {
+            string Query = "select ShopID from UsersShop where UserId='"+model.UserID+"'";
+            string shopID = _dal.Select<UsersShop>(Query, ref msg).FirstOrDefault().ShopID;
+            if (model.isAdd == true && model.isEdit == false)
+            {
+                string chln = GetMaxIdWithPrfix2("RequisitionNo", "000000", "000001", "BuyRequisition", shopID);//shopid HM13 from seaasion also userid from session
+                model.Chln = chln;
+                model.DeliveryDate = model.DeliveryDate.Date;
+                model.CmpIDX = chln +model.BarCode+ model.DeliveryDate;
+                model.BoxQty = model.Qty / model.BoxSize;
+                model.BuyDT = DateTime.Now;
+                model.EXPDT = model.DeliveryDate;
+                                        
+                model.BoxUOM = model.PackUOM;
+                model.PrdComm = 0;
+                model.VATPrcnt = 0;
+                model.DiscPrcnt = 0;
+                model.sQty = 0;
+
+                bool response = _dal.Insert<BuyOrderTemp>(model, "", "", "", ref msg);
+
+                if (!string.IsNullOrEmpty(msg))
+                    throw new Exception(msg);
+
+                return response;
+            }
+            else
+            {
+                query = baseQuery + $" where BarCode ='{model.BarCode}' AND sBarCode ='{model.sBarCode}' AND DeliveryDate ='{model.DeliveryDate}' ";
+                var obj = _dal.SelectFirstOrDefault<BuyOrderTemp>(query, ref msg);
+                bool response = _dal.Delete<BuyOrderTemp>(obj, "BarCode,sBarCode,DeliveryDate", "", ref msg);
+                if (response)
+                {
+                    string chln = GetMaxIdWithPrfix2("RequisitionNo", "000000", "000001", "BuyRequisition", shopID);//shopid HM13 from seaasion also userid from session
+                    model.Chln = chln;
+                    model.CmpIDX = chln + model.BarCode + model.DeliveryDate;
+                    model.BoxQty = model.Qty / model.BoxSize;
+                    model.BuyDT = DateTime.Now;
+                    model.EXPDT = model.DeliveryDate;
+                    model.BoxUOM = model.PackUOM;
+                    model.PrdComm = 0;
+                    model.VATPrcnt = 0;
+                    model.DiscPrcnt = 0;
+                    model.sQty = 0;
+
+                    bool res = _dal.Insert<BuyOrderTemp>(model, "", "", "", ref msg);
+
+                    if (!string.IsNullOrEmpty(msg))
+                        throw new Exception(msg);
+
+                    return res;
+                }
+                return response;
+            }
+        }
+
+        public List<BuyOrderTemp> GetBuyOrderTemps(string UserID)
+        {
+            query = baseQuery + $" where UserID='{UserID}'";
+            var response = _dal.Select<BuyOrderTemp>(query, ref msg).ToList();
+
+            return response;
+        }
+
+        public List<BuyOrderTemp> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string searchText = null)
+        {
+            whereCluase = "";
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                whereCluase = " where UserID='"+UserID+"' AND ( BarCode like '%" + searchText + @"%' or PrdDescription like '%" + searchText + @"%') 
+                       " + orderBy + "  OFFSET " + start + " ROWS FETCH NEXT " + length + " ROWS ONLY";
+            }
+            else
+            {
+                whereCluase = " where UserID='" + UserID + "'"+ orderBy + "  OFFSET " + start + " ROWS FETCH NEXT " + length + " ROWS ONLY";
+            }
+
+            query = string.Format("{0} {1}", baseQuery, whereCluase);
+            var data = _dal.Select<BuyOrderTemp>(query, ref msg);
+
+            #region filter data count
+            whereCluase = "";
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                whereCluase = " where UserID='" + UserID + "' AND (BarCode like '%" + searchText + @"%' or PrdDescription like '%" + searchText + @"%') ";
+            }
+            else
+            {
+                whereCluase = "  ";
+            }
+
+            query = " SELECT COUNT(*) FROM [BuyOrderTemp] " + whereCluase;
+            var count = _dal.SelectFirstColumn(query, ref msg);
+            if (data != null && data.Count > 0)
+            {
+                int _count;
+                int.TryParse(count, out _count);
+                data[0].RecordFilter = _count;
+            }
+            #endregion
+
+            msgs = msg;
+            return data;
+        }
+
+        public bool RemoveBuyOrderTemp(BuyOrderTemp model)
+        {
+            query = baseQuery + $" where UserID='{model.UserID}' AND BarCode='{model.BarCode}' ";
+            var obj = _dal.SelectFirstOrDefault<BuyOrderTemp>(query, ref msg);
+            if (obj == null)
+            {
+                return false;
+            }
+            bool response = _dal.Delete<BuyOrderTemp>(obj, "SupID", "", ref msg);
+            return response;
+        }
+        public decimal GetActualStockBySbarocde(string sBarcode)
+        {
+            decimal sum = 0;
+            string query = "select sum(balQty) as balQty from buy where sBarCode='" + sBarcode + "'";
+            var response = _dal.SelectFirstColumn(query, ref msg);
+            decimal.TryParse(response, out sum);
+            return sum;
+        }
+        public bool RemoveBuyOrderTempByID(string barCode)
+        {
+            query = baseQuery + $" where BarCode='{barCode}' ";
+            var obj = _dal.SelectFirstOrDefault<BuyOrderTemp>(query, ref msg);
+            if (obj == null)
+            {
+                return false;
+            }
+            bool response = _dal.Delete<BuyOrderTemp>(obj, "BarCode", "", ref msg);
+            return response;
+        }
+    }
+}

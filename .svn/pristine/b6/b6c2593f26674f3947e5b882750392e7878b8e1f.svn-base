@@ -1,0 +1,63 @@
+﻿using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    public interface IDamageLossRepository
+    {
+        List<Buy> GetDamageProductsSupplier(string SupId, string ShopID);
+        List<Buy> GetMainProductsSupplier(string SupId, string ShopID);
+    }
+    public class DamageLossRepository : BaseRepository, IDamageLossRepository
+    {
+        public DamageLossRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+
+        }
+        public List<Buy> GetDamageProductsSupplier(string SupId, string ShopID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Buy> GetMainProductsSupplier(string SupId, string ShopID)
+        {
+            string query = @"SP_GetStockByOrgBarcode 'All','All','" + ShopID + "' ";
+            var response = _dal.Select<SupportBuy>(query, ref msg).ToList();
+            if (response.Count <= 0)
+            {
+                return null;
+            }
+            List<Buy> buyList = new();
+            foreach (var item in response)
+            {
+                Buy buy = new();
+                buy.balQty = item.BalQty;
+                buy.BarCode = item.Barcode;
+                buy.sBarCode = item.sBarcode;
+                buy.PrdID = item.PrdID;
+                buy.PrdName = item.PrdName;
+                buy.SupID = item.SupID;
+                buy.SupName = item.Supname;
+                buy.UOMName = item.UOMName;
+                buy.ProductDescription = item.ItemName + item.UOMName;
+                buy.RPU = item.RPU;
+                buy.AutoSale = item.AutoSale;
+                buy.ProductDescriptionBangla = item.ItemNameBangla;
+                buy.BoxSize = item.BoxSize;
+                buy.IsConversionItem = item.IsConverationItem;
+                buy.SaleBalQty = buy.balQty / buy.BoxSize;
+                buyList.Add(buy);
+            }
+            if (string.IsNullOrEmpty(SupId))
+            {
+                return buyList;
+            }
+            var data = buyList.Where(p => p.SupID == SupId).ToList();
+            return data;
+        }
+    }
+}

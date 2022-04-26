@@ -1,0 +1,46 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Setups
+{
+    public interface IMemberCategoryProductService
+    {
+        List<MemberCategoryProduct> FindByMemCatId(string MemCatId);
+        MemberCategoryProduct FindById(string CatPrdID);
+        List<MemberCategoryProduct> FindAll();
+        bool Delete(EmployeeProduct model);
+    }
+    public class MemberCategoryProductService : IMemberCategoryProductService
+    {
+        private readonly IMemberCategoryProductRepository _repo;
+
+        public MemberCategoryProductService(IMemberCategoryProductRepository repo)
+        {
+            _repo = repo;
+        }
+        public bool Delete(EmployeeProduct model)
+        {
+            return true;
+            //return _ePRepo.Delete(model);
+        }
+        public List<MemberCategoryProduct> FindAll()
+        {
+            return _repo.FindAll();
+        }
+
+        public MemberCategoryProduct FindById(string CatPrdID)
+        {
+            return _repo.FindById(CatPrdID);
+        }
+
+        public List<MemberCategoryProduct> FindByMemCatId(string MemCatId)
+        {
+            return _repo.FindByMemCatId(MemCatId);
+        }
+    }
+}

@@ -1,0 +1,87 @@
+﻿using FairPos.Epylion.Service.Report;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Report
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class ReportController : ControllerBase
+    {
+        private readonly IReportService _service;
+
+        public ReportController(IReportService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public IActionResult CollectionNOStaffLedger(DateTime fromDate, DateTime toDate, string rfID)
+        {
+            if (string.IsNullOrEmpty(rfID))
+            {
+                return BadRequest();
+            }
+            var response = _service.getCollectionNOStaffLedger(fromDate, toDate, rfID);
+            if (response.Count == 0)
+            {
+                return BadRequest("No record found");
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetDashBoardItem()
+        {
+            var response = _service.GetDashBoardItem();
+            if (response.TotalItem==0)
+            {
+                return BadRequest("No record found");
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetInvoiceNoSSummary(DateTime fromDate, DateTime toDate, string rfID)
+        {
+            var response = _service.GetInvoiceNoSSummary(fromDate, toDate, rfID);
+            if (response.Count == 0)
+            {
+                return BadRequest("No record found");
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetPendingPrintedItems(DateTime fromDate, DateTime toDate, string rfID)
+        {
+            var response = _service.GetPendingPrintedItems(fromDate, toDate, rfID);
+            if (response.Count == 0)
+            {
+                return BadRequest("No record found");
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult getItemList(string supid, string prdId)
+        {
+            var response = _service.getItemList( supid,  prdId);
+            if (response.Count == 0)
+            {
+                return BadRequest("No record found");
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult getEmpName(string Invoice)
+        {
+            var response = _service.getEmpName(Invoice);
+            if (response == null)
+            {
+                return BadRequest("No record found");
+            }
+            return Ok(response);
+        }
+    }
+}

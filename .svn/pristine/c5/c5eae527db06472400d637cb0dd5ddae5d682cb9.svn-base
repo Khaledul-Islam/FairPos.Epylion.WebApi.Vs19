@@ -1,0 +1,47 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Setups
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class EmployeeController : ControllerBase 
+    {
+        private readonly IEmployeeService _empService;
+
+        public EmployeeController(IEmployeeService empService)
+        {
+            _empService = empService;
+        }
+
+
+        //[Authorize(Policy = nameof(Policy.Account))]
+        [HttpGet()]
+        public ActionResult<List<Employee>> Get()
+        {
+            try
+            {
+
+                var data = _empService.SelectAll();
+                if(data == null || data.Count==0)
+                {
+                    return BadRequest(data);
+                }
+                
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message + ex.StackTrace);
+            }
+        }
+
+    }
+}

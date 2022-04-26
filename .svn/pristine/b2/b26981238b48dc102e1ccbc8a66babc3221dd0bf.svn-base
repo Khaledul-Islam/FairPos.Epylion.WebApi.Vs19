@@ -1,0 +1,72 @@
+﻿using FairPos.Epylion.Models.Requisition;
+using FairPos.Epylion.Service.Requisition;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Requisition
+{
+    [Route("[controller]/[action]")]
+    [Authorize(Policy = nameof(Policy.Account))]
+    [ApiController]
+    public class MonthlyBudgetController : ControllerBase
+    {
+        private readonly IMonthlyBudgetService _service;
+
+        public MonthlyBudgetController(IMonthlyBudgetService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public IActionResult YearList()
+        {
+            var response = _service.YearList();
+            if (response.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetShopBudget(int year)
+        {
+            var response = _service.GetShopBudget(year,out string errMsg);
+            if (!string.IsNullOrEmpty(errMsg))
+            {
+                return BadRequest(errMsg);
+            }
+            if (response == null)
+            {
+                return NotFound("Not found");
+            }
+            return Ok(response);
+        }
+        [HttpPost]
+        public IActionResult SaveMonthlyBudget(MonthlyBudget budget)
+        {
+            if (budget == null)
+            {
+                return NotFound("Object not found");
+            }
+            try
+            {
+                var response = _service.SaveMonthlyBudget(budget, out string errMsg);
+                if (!string.IsNullOrEmpty(errMsg))
+                {
+                    return BadRequest(errMsg);
+                }
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+        }
+    }
+}

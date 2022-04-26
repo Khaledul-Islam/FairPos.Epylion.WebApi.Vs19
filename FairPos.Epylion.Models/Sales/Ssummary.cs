@@ -1,0 +1,50 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Models.Sales
+{
+	public class Ssummary
+	{
+		public DateTime SaleDT { get; set; }
+		public string Invoice { get; set; }
+		public decimal TotalCost { get; set; }
+		public decimal TotalAmt { get; set; }
+		public decimal Discount { get; set; }
+		public decimal DiscAmt { get; set; }
+		public decimal VAT { get; set; }
+		public decimal NetAmt { get; set; }
+		public decimal CshAmt { get; set; }
+		public decimal CrdAmt { get; set; }
+		public string PayType { get; set; }
+		public string Salesman { get; set; }
+		public string ShopID { get; set; }
+		public string CardName { get; set; }
+		public string CardNo { get; set; }
+		public string CounterID { get; set; }
+		public string PrvCus { get; set; }
+		public string PrvCusID { get; set; }
+		public string ParentID { get; set; }
+		public string GrandID { get; set; }
+		public string CusName { get; set; }
+		public decimal ReturnedAmt { get; set; }
+		public decimal rTotalCost { get; set; }
+		public string cInvoice { get; set; }
+		public string ReturnedType { get; set; }
+		public string Flag { get; set; }
+		public decimal PaidAmt { get; set; }
+		public decimal ChangeAmt { get; set; }
+		public decimal Point { get; set; }
+		public string PackageNo { get; set; }
+		public string UserId { get; set; }
+		public decimal RoundValue { get; set; }
+		public string EmpID { get; set; }
+		public string DelveryNo { get; set; }
+		public string SalesStockType { get; set; }
+		[FIK.DAL.FIK_NoCUD]
+		public DateTime SaleDTT { get; set; }
+
+	}
+}

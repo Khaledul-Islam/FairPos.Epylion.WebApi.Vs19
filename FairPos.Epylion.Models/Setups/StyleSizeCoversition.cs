@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Models.Setups
+{
+    public class StyleSizeCoversition
+    {
+        public decimal ConversitionId { get; set; }
+        public string MainSBarcode { get; set; }
+        public string MainBarcode { get; set; }
+        public string sBarcode { get; set; }
+        public string Barcode { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public string ItemName { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public string UOMName { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public string ItemFullName { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public string ItemNameBangla { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public string ItemFullNameBangla { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public string BoxUOMName { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public decimal BoxSize { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+
+        public DateTime ExpireDate { get; set; }
+
+        [FIK.DAL.FIK_NoCUD]
+        public string SupID { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public string bCode { get; set; } 
+        [FIK.DAL.FIK_NoCUD]
+        public string ShopID { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public string UserID { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public decimal sellPrice { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public decimal boxQTY { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public decimal unitQTY { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public decimal QTY { get; set; }
+        [FIK.DAL.FIK_NoCUD]
+        public decimal totalqty { get; set; }
+    }
+}

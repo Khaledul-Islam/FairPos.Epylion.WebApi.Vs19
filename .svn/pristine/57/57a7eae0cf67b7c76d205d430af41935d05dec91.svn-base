@@ -1,0 +1,44 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Service.Setups;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface ICircularPriceChangedService
+    {
+        List<CircularPriceChanged> GetPending();
+        CircularPriceChanged GetSingle(string id);
+        bool Update(CircularPriceChanged model);
+    }
+
+    public class CircularPriceChangedService : ICircularPriceChangedService
+    {
+        private readonly ICircularPriceChangedRepositroy _Repo;
+        public CircularPriceChangedService(ICircularPriceChangedRepositroy Repo)
+        {          
+            _Repo = Repo;
+        }
+    
+        public List<CircularPriceChanged> GetPending()
+        {
+            return _Repo.GetPending();
+        }
+
+        public CircularPriceChanged GetSingle(string id)
+        {
+            return _Repo.GetSingle(id);
+        }
+
+        public bool Update(CircularPriceChanged model)
+        {
+            return _Repo.Update(model);
+        }
+    }
+}

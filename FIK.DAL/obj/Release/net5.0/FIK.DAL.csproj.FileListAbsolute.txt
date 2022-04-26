@@ -1,0 +1,12 @@
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\bin\Release\net5.0\FIK.DAL.deps.json
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\bin\Release\net5.0\FIK.DAL.dll
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\bin\Release\net5.0\ref\FIK.DAL.dll
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\bin\Release\net5.0\FIK.DAL.pdb
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.AssemblyInfoInputs.cache
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.AssemblyInfo.cs
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.csproj.CoreCompileInputs.cache
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.dll
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\ref\FIK.DAL.dll
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.pdb
+D:\FairPos.Epylion.WebApi.Vs19\FIK.DAL\obj\Release\net5.0\FIK.DAL.csproj.AssemblyReference.cache

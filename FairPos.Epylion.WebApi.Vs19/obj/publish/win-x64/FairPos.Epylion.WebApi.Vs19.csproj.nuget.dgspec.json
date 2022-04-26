@@ -1,0 +1,401 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19.csproj": {}
+  },
+  "projects": {
+    "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj",
+        "projectName": "FairPos.Epylion.Models",
+        "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj",
+        "packagesPath": "C:\\Users\\SHUVO\\.nuget\\packages\\",
+        "outputPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\SHUVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    },
+    "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Service\\FairPos.Epylion.Service.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Service\\FairPos.Epylion.Service.csproj",
+        "projectName": "FairPos.Epylion.Service",
+        "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Service\\FairPos.Epylion.Service.csproj",
+        "packagesPath": "C:\\Users\\SHUVO\\.nuget\\packages\\",
+        "outputPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Service\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\SHUVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj"
+              },
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epyllion.Repository\\FairPos.Epyllion.Repository.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epyllion.Repository\\FairPos.Epyllion.Repository.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[10.1.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    },
+    "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19.csproj",
+        "projectName": "FairPos.Epylion.WebApi.Vs19",
+        "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19.csproj",
+        "packagesPath": "C:\\Users\\SHUVO\\.nuget\\packages\\",
+        "outputPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.WebApi.Vs19\\obj\\publish\\win-x64\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\SHUVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj"
+              },
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Service\\FairPos.Epylion.Service.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Service\\FairPos.Epylion.Service.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            },
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.90, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[5.0.9, )"
+            },
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[5.0.9, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[5.6.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[5.0.13, 5.0.13]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[5.0.13, 5.0.13]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+              "version": "[5.0.13, 5.0.13]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    },
+    "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epyllion.Repository\\FairPos.Epyllion.Repository.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epyllion.Repository\\FairPos.Epyllion.Repository.csproj",
+        "projectName": "FairPos.Epyllion.Repository",
+        "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epyllion.Repository\\FairPos.Epyllion.Repository.csproj",
+        "packagesPath": "C:\\Users\\SHUVO\\.nuget\\packages\\",
+        "outputPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epyllion.Repository\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\SHUVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FairPos.Epylion.Models\\FairPos.Epylion.Models.csproj"
+              },
+              "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj": {
+                "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[10.1.1, )"
+            },
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.90, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    },
+    "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj",
+        "projectName": "FIK.DAL",
+        "projectPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\FIK.DAL.csproj",
+        "packagesPath": "C:\\Users\\SHUVO\\.nuget\\packages\\",
+        "outputPath": "D:\\FairPos.Epylion.WebApi.Vs19\\FIK.DAL\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\SHUVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "System.Data.Common": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.4.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

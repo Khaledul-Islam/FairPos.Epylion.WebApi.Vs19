@@ -1,0 +1,81 @@
+﻿using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Setups
+{
+    public interface IMemberCategoryProductRepository
+    {
+        List<MemberCategoryProduct> FindByMemCatId(string MemCatId);
+        MemberCategoryProduct FindById(string CatPrdID);
+        List<MemberCategoryProduct> FindAll();
+        bool Delete(EmployeeProduct model);
+    }
+
+    public class MemberCategoryProductRepository : BaseRepository, IMemberCategoryProductRepository
+    {
+        public MemberCategoryProductRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT  [CatPrdId]
+                                 ,[MemCatId]
+                                 ,[PrdID]
+                                 ,[LimitQty]
+                        ,CASE WHEN (ROW_NUMBER() OVER (ORDER BY CatPrdId)  =1)
+	                     THEN	(SELECT COUNT(*) FROM MemberCategoryProduct) 
+	                     ELSE 0 END RecordCount
+                    FROM MemberCategoryProduct";
+        }
+        public bool Delete(EmployeeProduct model)
+        {
+            string Query = "SELECT * FROM EmployeeProduct WHERE EmpID='" + model.EmpID + "'";
+            var data = _dal.Select<EmployeeProduct>(Query, ref msg).FirstOrDefault();
+
+            if (data == null)
+            {
+                return false;
+            }
+
+            bool response = _dal.Delete<EmployeeProduct>(data, "EmpID", "", ref msg);
+
+            if (!string.IsNullOrEmpty(msg))
+                throw new Exception(msg);
+
+            return response;
+        }
+        public List<MemberCategoryProduct> FindAll()
+        {
+            query = baseQuery;
+            var r = _dal.Select<MemberCategoryProduct>(query, ref msg);
+
+            if (!string.IsNullOrEmpty(msg))
+                throw new Exception(msg);
+
+            return r;
+        }
+
+        public MemberCategoryProduct FindById(string CatPrdID)
+        {
+            query = baseQuery + $" where CatPrdId='{CatPrdID}' ";
+            var r = _dal.SelectFirstOrDefault<MemberCategoryProduct>(query, ref msg);
+
+            if (!string.IsNullOrEmpty(msg))
+                throw new Exception(msg);
+
+            return r;
+        }
+
+        public List<MemberCategoryProduct> FindByMemCatId(string MemCatId)
+        {
+            query = baseQuery + $" where MemCatId='{MemCatId}' ";
+            var r = _dal.Select<MemberCategoryProduct>(query, ref msg).ToList();
+
+            if (!string.IsNullOrEmpty(msg))
+                throw new Exception(msg);
+
+            return r;
+        }
+    }
+}

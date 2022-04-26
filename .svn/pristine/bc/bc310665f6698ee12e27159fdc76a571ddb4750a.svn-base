@@ -1,0 +1,65 @@
+﻿using FairPos.Epylion.Service.Sales;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Sales
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class SalesWorkerController : ControllerBase
+    {
+        private readonly ISalesWorkerService _service;
+
+        public SalesWorkerController(ISalesWorkerService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public IActionResult TempSalesOrderList(string UserId, string CounterId, string stocktype)
+        {
+            var response = _service.TempSalesOrderList(UserId, CounterId, stocktype);
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult TempSalesOrder(string UserId, string CounterId, string stocktype)
+        {
+            var response = _service.TempSalesOrder(UserId, CounterId, stocktype);
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetEmployeeById(string empId)
+        {
+            var response = _service.GetEmployeeById(empId);
+            if (response == null)
+            {
+                return BadRequest();
+             }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetInvoiceByEmployee(string empId)
+        {
+            var response = _service.GetInvoiceByEmployee(empId);
+            if (response == null)
+            {
+                return BadRequest();
+             }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetEmployeeByRFId(string rfid)
+        {
+            var response = _service.GetEmployeeByRFId(rfid);
+            if (response == null)
+            {
+                return BadRequest();
+             }
+            return Ok(response);
+        }
+    }
+}

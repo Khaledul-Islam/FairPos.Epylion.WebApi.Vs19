@@ -1,0 +1,67 @@
+﻿using FairPos.Epylion.Service.Requisition;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Requisition
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+   // [Authorize(Policy = nameof(Policy.Account))]
+    public class AutoRequisitionController : ControllerBase
+    {
+        private readonly IAutoRequisitionService _service;
+
+        public AutoRequisitionController(IAutoRequisitionService service)
+        {
+            _service = service;
+        }
+        [HttpPost]
+        public IActionResult GenerateRequistion(string UserID)
+        {
+            if (string.IsNullOrEmpty(UserID))
+            {
+                return BadRequest("NO User ID Found");
+            }
+            _service.GenerateRequistion(UserID, out string errMsg);
+            if (!string.IsNullOrEmpty(errMsg))
+            {
+                return BadRequest(errMsg);
+            }
+            return Ok("Successfull");
+        }
+        [HttpGet]
+        public IActionResult GetTempRequistionDataByUser(string user)
+        {
+
+            if (string.IsNullOrEmpty(user))
+            {
+                return BadRequest("NO User ID Found");
+            }
+            var response = _service.GetTempRequistionDataByUser(user, out string errMsg);
+            if (response == null)
+            {
+                return NotFound("No data found");
+            }
+            if (!string.IsNullOrEmpty(errMsg))
+            {
+                return BadRequest(errMsg);
+            }
+            return Ok(response);
+        }
+        [HttpDelete]
+        public IActionResult RemoveAllTempRequistion(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("NO User ID Found");
+            }
+            _service.RemoveAllTempRequistion(userId);
+            return Ok("True");
+        }
+    }
+}

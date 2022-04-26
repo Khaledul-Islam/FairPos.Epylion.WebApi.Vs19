@@ -1,0 +1,49 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Models.Transfer;
+using FairPos.Epyllion.Repository.Transfer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Transfer
+{
+    public interface IStaffToMainWorkerService
+    {
+        List<Buy> GetMainWorkerProducts(string SupId, string ShopID);
+        List<Buy> GetMainWorkerNewBarcode(string sBarcode, decimal qty);
+        Buy GetMainWorkerBarcodeExp(string expbarcode);
+        bool SaveStockTransfer(List<TempStockTransfer> model);
+    }
+
+    public class StaffToMainWorkerService : IStaffToMainWorkerService
+    {
+        private readonly IStaffToMainWorkerRepository _service;
+
+        public StaffToMainWorkerService(IStaffToMainWorkerRepository service)
+        {
+            _service = service;
+        }
+
+        public Buy GetMainWorkerBarcodeExp(string expbarcode)
+        {
+            return _service.GetMainWorkerBarcodeExp(expbarcode);
+        }
+
+        public List<Buy> GetMainWorkerNewBarcode(string sBarcode, decimal qty)
+        {
+            return _service.GetMainWorkerNewBarcode(sBarcode, qty);
+        }
+
+        public List<Buy> GetMainWorkerProducts(string SupId, string ShopID)
+        {
+            return _service.GetMainWorkerProducts(SupId, ShopID);
+        }
+
+        public bool SaveStockTransfer(List<TempStockTransfer> model)
+        {
+            return _service.SaveStockTransfer(model);
+        }
+    }
+}

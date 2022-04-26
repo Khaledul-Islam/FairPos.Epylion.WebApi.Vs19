@@ -1,0 +1,59 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    /////////////////////////////////////////////////////////////////////////////////
+    //FileName: IPurchaseOrderRepository.cs
+    //FileType: C# Source file
+    //Author : RAHEE
+    //Created On : 17/10/2021
+    //Last Modified On : 
+    //Copy Rights : MediaSoft Data System LTD
+    //Description : Interface and Class for defining database related functions
+    /////////////////////////////////////////////////////////////////////////////////
+    public interface ICircularPriceChangedRepositroy
+    {
+        List<CircularPriceChanged> GetPending();
+        CircularPriceChanged GetSingle(string id);
+        bool Update(CircularPriceChanged model);
+
+    }
+
+    public class CircularPriceChangedRepositroy : BaseRepository, ICircularPriceChangedRepositroy
+    {
+        public CircularPriceChangedRepositroy(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            //baseQuery = @"SELECT Id,CPCNo,CPCName,EffectiveDate,UserId,CreateDate,IsActivated,IsApproved,CASE WHEN (ROW_NUMBER() OVER (ORDER BY id)  =1)
+            //            THEN (SELECT COUNT(*) FROM CircularPriceChanged) ELSE 0 END RecordCount FROM CircularPriceChanged";
+            baseQuery = @"SELECT Id,CPCNo,CPCName,EffectiveDate,UserId,CreateDate,IsActivated,IsApproved FROM CircularPriceChanged";
+
+        }
+
+        public List<CircularPriceChanged> GetPending()
+        {
+            string query = baseQuery + " Where IsApproved = 0";
+
+            var data = _dal.Select<CircularPriceChanged>(query, ref msg);
+            return data;
+        }
+
+        public CircularPriceChanged GetSingle(string id)
+        {
+            string query = baseQuery + " Where CPCNo = '" + id + "'";
+            return _dal.Select<CircularPriceChanged>(query, ref msg).FirstOrDefault();
+        }
+
+        public bool Update(CircularPriceChanged model)
+        {
+            return _dal.Update<CircularPriceChanged>(model, "IsApproved", "CPCNo", "", ref msg);
+        }
+
+
+    }
+}

@@ -1,0 +1,78 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Models.Transfer;
+using FairPos.Epyllion.Repository.Transfer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Transfer
+{
+    public interface IMainToStaffWorkerService
+    {
+        List<Buy> GetTransferProducts(string SupId, string ShopID);
+        List<Buy> GetTransferNewBarcode(string sBarcode, decimal qty);
+        Buy GetTransferBarcodeExp(string expbarcode);
+        List<TempStockTransfer> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID,string stocktype, string searchText = null);
+        List<TempStockTransfer> GetTempStocks();
+        bool SaveTempStockTransfer(Buy model);
+        bool DeleteTempStockTransfer(TempStockTransfer model);
+        bool SaveStockTransfer(List<TempStockTransfer> model);
+        TempStockTransfer GetTempStock(string Barcode, string stockType);
+    }
+    public class MainToStaffWorkerService : IMainToStaffWorkerService
+    {
+        private readonly IMainToStaffWorkerRepository _repo;
+
+        public MainToStaffWorkerService(IMainToStaffWorkerRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public bool DeleteTempStockTransfer(TempStockTransfer model)
+        {
+            return _repo.DeleteTempStockTransfer(model);
+        }
+
+        public List<TempStockTransfer> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID, string stocktype, string searchText = null)
+        {
+            return _repo.GetsForDataTables(start, length, orderBy, ref msgs, UserID, ShopID, stocktype, searchText);
+        }
+
+        public TempStockTransfer GetTempStock(string Barcode, string stockType)
+        {
+            return _repo.GetTempStock(Barcode, stockType);
+        }
+
+        public List<TempStockTransfer> GetTempStocks()
+        {
+            return _repo.GetTempStocks();
+        }
+
+        public Buy GetTransferBarcodeExp(string expbarcode)
+        {
+            return _repo.GetTransferBarcodeExp(expbarcode);
+        }
+
+        public List<Buy> GetTransferNewBarcode(string sBarcode, decimal qty)
+        {
+            return _repo.GetTransferNewBarcode(sBarcode, qty);
+        }
+
+        public List<Buy> GetTransferProducts(string SupId, string ShopID)
+        {
+            return _repo.GetTransferProducts(SupId, ShopID);
+        }
+
+        public bool SaveStockTransfer(List<TempStockTransfer> model)
+        {
+            return _repo.SaveStockTransfer(model);
+        }
+
+        public bool SaveTempStockTransfer(Buy model)
+        {
+            return _repo.SaveTempStockTransfer(model);
+        }
+    }
+}

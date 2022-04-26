@@ -1,0 +1,84 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Service.Operations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.WebApi.Vs19.Controllers.Operations
+{
+    [Route("[controller]/[action]")]
+    [ApiController]
+    public class ArrivalCheckController : ControllerBase
+    {
+        private readonly IApprivalCheckService _service;
+
+        public ArrivalCheckController(IApprivalCheckService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public IActionResult GetACSupplierDDL()
+        {
+            var response = _service.GetACSupplierDDL();
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetPendingPONo(string SupID, string ShopID)
+        {
+            var response = _service.GetPendingPONo(SupID, ShopID);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetTempArrival(string UserID)
+        {
+            var response = _service.GetTempArrival(UserID);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetTempArrivalByChallanNo(string chln)
+        {
+            var response = _service.GetTempArrivalByChallanNo(chln);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetChallanDetails(string POno)
+        {
+            var response = _service.GetChallanDetails(POno);
+            if (response == null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+        [HttpPost]
+        public IActionResult SaveTempArrival(List<BuyOrder> model)
+        {
+            var response = _service.SaveTempArrival(model);
+            if (response == false)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
+        }
+    }
+}

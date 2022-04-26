@@ -1,0 +1,44 @@
+﻿using FairPos.Epylion.Models.Requisition;
+using FIK.DAL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Requisition
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //FileName: MonthlyBudgetRepository.cs
+    //FileType: C# Source file
+    //Author : SHUVO
+    //Created On : 10-01-2022
+    //Last Modified On :
+    //Copy Rights : MediaSoft Data System LTD
+    //Description : Interface and Class for defining database related functions
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public interface IMonthlyBudgetRepository
+    {
+        bool SaveMonthlyBudget(MonthlyBudget budget, out string errMsg);
+    }
+    public class MonthlyBudgetRepository : BaseRepository, IMonthlyBudgetRepository
+    {
+        public MonthlyBudgetRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+
+        }
+
+        public bool SaveMonthlyBudget(MonthlyBudget budget, out string errMsg)
+        {
+            errMsg = string.Empty;
+            CompositeModel composite = new();
+            composite.AddRecordSet<MonthlyBudget>(budget, OperationMode.InsertOrUpdaet, "budgetID", "", "ShopID,Year,Month", "");
+            bool response = _dal.InsertUpdateComposite(composite, ref msg);
+            if (!string.IsNullOrEmpty(msg))
+            {
+                errMsg = msg;
+            }
+            return response;
+        }
+    }
+}

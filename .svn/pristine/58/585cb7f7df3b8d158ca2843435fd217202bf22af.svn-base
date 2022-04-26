@@ -1,0 +1,268 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    public interface IDamageLossRepository
+    {
+        List<Buy> GetDamageProductsSupplier(string SupId);
+        StockDMLTemp  GetStockDMLTemp(string BarCode);
+        List<Buy> GetMainProductsSupplier(string SupId, string ShopID);
+        List<Buy> GetDamageBarcodeBySbarcode(string sBarcode, decimal qty);
+        Buy GetDamageBarcodeExp(string expbarcode);
+        bool StockDMLTempSave(Buy model);
+        bool StockDMLTempDelete(StockDMLTemp model);
+        List<StockDMLTemp> GetTempDataByUser(string UserID, string ShopID);
+        List<StockDMLTemp> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID, string searchText = null);
+
+
+    }
+    public class DamageLossRepository : BaseRepository, IDamageLossRepository
+    {
+        public DamageLossRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT  [AutoId],[sBarcode],[BarCode],[GroupName],[PrdName],[BTName],[SSName],[SupID],[SupName],[CPU],[RPU],[Qty],[cSqty],[sQty],[rQty]
+                           ,[balQty],[sReturn],[ReturnDt],[UserID],[ShopID],[REASONS],[IsDamageStock],[IsGiftItemAvailable],[BoxQty],[BoxUOM],[UnitUOM]
+                        ,CASE WHEN (ROW_NUMBER() OVER (ORDER BY BarCode)  =1)
+	                     THEN	(SELECT COUNT(*) FROM StockDMLTemp) 
+	                     ELSE 0 END RecordCount
+                    from StockDMLTemp";
+        }
+        public List<Buy> GetDamageProductsSupplier(string SupId)
+        {
+            string query = @"SP_GetDmageStockByOrgBarcode 'All' ";
+            var response = _dal.Select<SupportBuy>(query, ref msg).ToList();
+            if (response.Count <= 0)
+            {
+                return null;
+            }
+            List<Buy> buyList = new();
+            foreach (var item in response)
+            {
+                Buy buy = new();
+                buy.balQty = item.BalQty;
+                buy.BarCode = item.Barcode;
+                buy.sBarCode = item.sBarcode;
+                buy.PrdID = item.PrdID;
+                buy.PrdName = item.PrdName;
+                buy.SupID = item.SupID;
+                buy.SupName = item.Supname;
+                buy.UOMName = item.UOMName;
+                buy.ProductDescription = item.ItemName + item.UOMName;
+                buy.RPU = item.RPU;
+                buy.AutoSale = item.AutoSale;
+                buy.ProductDescriptionBangla = item.ItemNameBangla;
+                buy.IsConversionItem = item.IsConverationItem;
+                buy.BoxSize = item.BoxSize;
+                buy.SaleBalQty = buy.balQty / buy.BoxSize;
+                buyList.Add(buy);
+            }
+            if (string.IsNullOrEmpty(SupId))
+            {
+                return buyList;
+            }
+            var data = buyList.Where(p => p.SupID == SupId).ToList();
+            return data;
+        }
+
+        public List<Buy> GetMainProductsSupplier(string SupId, string ShopID)
+        {
+            string query = @"SP_GetStockByOrgBarcode 'All','All','" + ShopID + "' ";
+            var response = _dal.Select<SupportBuy>(query, ref msg).ToList();
+            if (response.Count <= 0)
+            {
+                return null;
+            }
+            List<Buy> buyList = new();
+            foreach (var item in response)
+            {
+                Buy buy = new();
+                buy.balQty = item.BalQty;
+                buy.BarCode = item.Barcode;
+                buy.sBarCode = item.sBarcode;
+                buy.PrdID = item.PrdID;
+                buy.PrdName = item.PrdName;
+                buy.SupID = item.SupID;
+                buy.SupName = item.Supname;
+                buy.UOMName = item.UOMName;
+                buy.ProductDescription = item.ItemName + item.UOMName;
+                buy.RPU = item.RPU;
+                buy.AutoSale = item.AutoSale;
+                buy.ProductDescriptionBangla = item.ItemNameBangla;
+                buy.BoxSize = item.BoxSize;
+                buy.IsConversionItem = item.IsConverationItem;
+                buy.SaleBalQty = buy.balQty / buy.BoxSize;
+                buyList.Add(buy);
+            }
+            if (string.IsNullOrEmpty(SupId))
+            {
+                return buyList;
+            }
+            var data = buyList.Where(p => p.SupID == SupId).ToList();
+            return data;
+        }
+
+        public List<Buy> GetDamageBarcodeBySbarcode(string sBarcode, decimal qty)
+        {
+
+            string query = @"SP_GetDamageNewBarcodeBySbarocde '" + sBarcode + "' ," + qty + "";
+            var response = _dal.Select<SupportBuy>(query, ref msg).ToList();
+            if (response.Count <= 0)
+            {
+                return null;
+            }
+            List<Buy> buyList = new();
+            foreach (var item in response)
+            {
+                Buy buy = new();
+                buy.balQty = item.BalQty;
+                buy.BarCode = item.Barcode;
+                buy.sBarCode = item.sBarcode;
+                buy.PrdID = item.PrdID;
+                buy.PrdName = item.PrdName;
+                buy.SupID = item.SupID;
+                buy.SupName = item.Supname;
+                buy.UOMName = item.UOMName;
+                buy.ProductDescription = item.ItemFullName;
+                buy.ProductDescriptionBangla = item.ItemFullNameBangla;
+                buy.RPU = item.RPU;
+                buy.CPU = item.CPU;
+                buy.VATPrcnt = item.VATPrcnt;
+                buy.EXPDT = item.EXPDT;
+                buy.sQty = item.AppliedQty;
+                buyList.Add(buy);
+            }
+            return buyList;
+        }
+        public Buy GetDamageBarcodeExp(string expbarcode)
+        {
+            string query = @"SP_GetByDmgBarcodeExp '" + expbarcode + "' ";
+            var item = _dal.Select<SupportBuy>(query, ref msg).FirstOrDefault();
+            if (item == null)
+            {
+                return new Buy();
+            }
+            Buy buy = new();
+            buy.balQty = item.BalQty;
+            buy.BarCode = item.Barcode;
+            buy.sBarCode = item.sBarcode;
+            buy.PrdID = item.PrdID;
+            buy.PrdName = item.PrdName;
+            buy.SupID = item.SupID;
+            buy.SupName = item.Supname;
+            buy.UOMName = item.UOMName;
+            buy.ProductDescription = item.ItemFullName;
+            buy.ProductDescriptionBangla = item.ItemFullNameBangla;
+            buy.RPU = item.RPU;
+            buy.CPU = item.CPU;
+            buy.VATPrcnt = item.VATPrcnt;
+            buy.EXPDT = item.EXPDT;
+
+            return buy;
+        }
+
+        public StockDMLTemp GetStockDMLTemp(string BarCode)
+        {
+            string query = "select * from StockDMLTemp where BarCode='"+BarCode+"'";
+            var response = _dal.Select<StockDMLTemp>(query, ref msg).FirstOrDefault();
+            return response;
+        }        
+        
+        public List<StockDMLTemp> GetTempDataByUser(string UserID,string ShopID)
+        {
+            string query = "select * from StockDMLTemp where UserID='"+ UserID + "' AND ShopID='"+ShopID+"'";
+             var response = _dal.Select<StockDMLTemp>(query, ref msg).ToList();
+            return response;
+        }
+        private List<GiftStock> getGiftStock (string sbarcode)
+        {
+            string query = "select * from GiftStock where Barcode='" + sbarcode + "'";
+            return _dal.Select<GiftStock>(query, ref msg).ToList();
+        }
+        public bool StockDMLTempSave(Buy model)
+        {
+            var gf = getGiftStock(model.BarCode);
+
+            StockDMLTemp otemp = new StockDMLTemp();
+
+            otemp.BarCode = model.BarCode;
+            otemp.RPU = model.RPU;
+            otemp.CPU = model.CPU;
+            otemp.sBarcode = model.sBarCode;
+            otemp.ShopID = model.ShopID;
+            otemp.SupID = model.SupID;
+            otemp.Qty = model.Qty;
+            otemp.BoxQty = model.bQty;
+            otemp.UserID = model.UserID;
+            otemp.PrdName = model.ProductDescription;
+            otemp.REASONS = model.reason;
+            otemp.BoxUOM = model.UOMName;
+            otemp.UnitUOM = model.BoxUOMName;
+            otemp.ReturnDt = DateTime.Now;//extra
+            otemp.IsGiftItemAvailable = false;
+            if (gf.Count>0)
+            {
+                otemp.IsGiftItemAvailable = true;
+            }
+            otemp.IsDamageStock = model.IsDamageStock;
+            bool response = _dal.Insert<StockDMLTemp>(otemp, "", "AutoId", "", ref msg);
+            return response;
+        }
+
+        public List<StockDMLTemp> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID,string ShopID, string searchText = null)
+        {
+            whereCluase = "";
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                whereCluase = " where UserID='" + UserID + "' AND ShopID='" + ShopID + "' AND ( BarCode like '%" + searchText + @"%' or PrdName like '%" + searchText + @"%') 
+                       " + orderBy + "  OFFSET " + start + " ROWS FETCH NEXT " + length + " ROWS ONLY";
+            }
+            else
+            {
+                whereCluase = " where ShopID='" + ShopID + "' AND UserID='" + UserID + "' " + orderBy + "  OFFSET " + start + " ROWS FETCH NEXT " + length + " ROWS ONLY";
+            }
+
+            query = string.Format("{0} {1}", baseQuery, whereCluase);
+            var data = _dal.Select<StockDMLTemp>(query, ref msg);
+
+            #region filter data count
+            whereCluase = "";
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                whereCluase = " where UserID='" + UserID + "' AND ShopID='" + ShopID + "' AND (BarCode like '%" + searchText + @"%' or PrdName like '%" + searchText + @"%') ";
+            }
+            else
+            {
+                whereCluase = " where ShopID='" + ShopID + "' AND UserID='" + UserID + "' ";
+            }
+
+            query = " select COUNT(*) from StockDMLTemp " + whereCluase;
+            var count = _dal.SelectFirstColumn(query, ref msg);
+            if (data != null && data.Count > 0)
+            {
+                int _count;
+                int.TryParse(count, out _count);
+                data[0].RecordFilter = _count;
+            }
+            #endregion
+
+            msgs = msg;
+            return data;
+        }
+
+        public bool StockDMLTempDelete(StockDMLTemp model)
+        {
+            bool response = _dal.Delete<StockDMLTemp>(model, "BarCode,sBarcode,UserID", "", ref msg);
+
+            if (!string.IsNullOrEmpty(msg))
+                throw new Exception(msg);
+
+            return response;
+        }
+    }
+}

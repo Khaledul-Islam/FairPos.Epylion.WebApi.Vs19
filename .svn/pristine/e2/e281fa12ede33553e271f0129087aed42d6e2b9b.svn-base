@@ -1,0 +1,75 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epylion.Service.Setups;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IPurchaseOrderService
+    {
+        bool Insert(BuyOrderTemp model);
+        List<Supplier> SupplierListDDL();
+        bool PurchaseOrder(List<BuyOrderTemp> model);
+        Supplier SupplierbyID(string SupID);
+        bool RemoveBuyOrderTemp(BuyOrderTemp model);
+        bool RemoveBuyOrderTempByID(string barCode);
+        List<BuyOrderTemp> GetBuyOrderTemps(string UserID);
+        decimal GetActualStockBySbarocde(string sBarcode);
+    }
+
+    public class PurchaseOrderService : IPurchaseOrderService
+    {
+        private readonly ISupplierService _supService;
+        private readonly IPurchaseOrderRepository _poRepo;
+        public PurchaseOrderService(ISupplierService supService, IPurchaseOrderRepository poRepo)
+        {
+            _supService = supService;
+            _poRepo = poRepo;
+        }
+
+        public List<Supplier> SupplierListDDL()
+        {
+            return _supService.SelectAll().ToList() ;
+        }
+        public bool Insert(BuyOrderTemp model)
+        {
+            return _poRepo.Insert(model);
+        }
+
+        public bool RemoveBuyOrderTemp(BuyOrderTemp model)
+        {
+            return _poRepo.RemoveBuyOrderTemp(model);
+        }
+
+        public Supplier SupplierbyID(string SupID)
+        {
+            return _supService.FindById(SupID);
+        }
+
+        public List<BuyOrderTemp> GetBuyOrderTemps(string UserID)
+        {
+            return _poRepo.GetBuyOrderTemps(UserID);
+        }
+
+        public bool RemoveBuyOrderTempByID(string barCode)
+        {
+            return _poRepo.RemoveBuyOrderTempByID(barCode);
+        }
+
+        public decimal GetActualStockBySbarocde(string sBarcode)
+        {
+            return _poRepo.GetActualStockBySbarocde(sBarcode);
+        }
+
+        public bool PurchaseOrder(List<BuyOrderTemp> model)
+        {
+            return _poRepo.PurchaseOrder(model);
+        }
+    }
+}

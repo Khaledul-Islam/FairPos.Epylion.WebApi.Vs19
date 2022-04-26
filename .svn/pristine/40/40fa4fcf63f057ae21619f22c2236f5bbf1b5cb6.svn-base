@@ -1,0 +1,116 @@
+﻿using FairPos.Epylion.Models.Requisition;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Requisition
+{
+    public interface IAutoRequisitionRepository 
+    {
+        IEnumerable<AutoRequistionTemp> Gets(string chln = null);
+        void Create(AutoRequistionTemp model);
+        void Update(AutoRequistionTemp model);
+        void Remove(AutoRequistionTemp model);
+        void Save();
+        List<AutoRequistionTemp> GetTempDataByUser(string user);
+        void RemoveAll(string userId);
+        AutoRequistionTemp GenerateRequistion(string fromDate, string toDate, string userId);
+        List<AutoRequistionTemp> GetTempRequistionData(out string errMsg);
+        void UpdateActualQty(string barcode, decimal actQty);
+    }
+
+    public class AutoRequisitionRepository : BaseRepository, IAutoRequisitionRepository
+    {
+        public AutoRequisitionRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT [CmpIDX]
+                                  ,[Chln]
+                                  ,[SupID]
+                                  ,[sBarCode]
+                                  ,[BarCode]
+                                  ,[BoxQty]
+                                  ,[Qty]
+                                  ,[sQty]
+                                  ,[DiscPrcnt]
+                                  ,[VATPrcnt]
+                                  ,[PrdComm]
+                                  ,[CPU]
+                                  ,[RPU]
+                                  ,[BuyDT]
+                                  ,[EXPDT]
+                                  ,[UserID]
+                                  ,[PrdDescription]
+                                  ,[BoxUOM]
+                                  ,[UnitUOM]
+                                  ,[PrdID]
+                                  ,[POPackQty]
+                                  ,[PackUOM]
+                                  ,[BalQty]
+                                  ,[BoxSize]
+                                  ,[MinOrder]
+                                  ,[POPackSize]
+                                  ,[ActualBoxQty]
+                                  ,[Remarks]
+                              FROM [AutoRequistionTemp]";
+        }
+        public void Create(AutoRequistionTemp model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AutoRequistionTemp GenerateRequistion(string fromDate, string toDate, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<AutoRequistionTemp> Gets(string chln = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<AutoRequistionTemp> GetTempRequistionData(out string errMsg)
+        {
+            errMsg = string.Empty;
+            var response = _dal.Select<AutoRequistionTemp>(baseQuery, ref msg);
+            if (response.Count == 0)
+            {
+                errMsg = "No record found.";
+                return null;
+            }
+            return response;
+
+        }
+
+        public List<AutoRequistionTemp> GetTempDataByUser(string user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Remove(AutoRequistionTemp model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAll(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(AutoRequistionTemp model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateActualQty(string barcode, decimal actQty)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

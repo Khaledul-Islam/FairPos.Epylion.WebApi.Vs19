@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>E:\Publish\RenuAPI</_PublishTargetUrl>
+    <History>True|2022-03-31T10:04:15.2328395Z;True|2022-03-29T17:25:54.7175185+06:00;True|2022-03-21T16:00:05.1949288+06:00;True|2022-03-16T10:15:48.3567810+06:00;True|2022-03-08T15:25:10.1052782+06:00;True|2022-02-01T15:39:46.7494734+06:00;True|2022-01-31T10:27:23.2702411+06:00;</History>
+  </PropertyGroup>
+</Project>

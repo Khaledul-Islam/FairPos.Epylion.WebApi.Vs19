@@ -1,0 +1,129 @@
+﻿using FairPos.Epylion.Models.Sales;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Sales
+{
+    public interface ISalesWorkerRepository
+    {
+        List<TempSalesOrder> TempSalesOrderList(string UserId, string CounterId, string stocktype);
+        TempSalesOrder TempSalesOrder(string UserId, string CounterId, string stocktype);
+        Employee GetEmployeeById(decimal empId);
+        Employee GetEmployeeByRFId(string rfid);
+        List<Ssummary> GetInvoiceByEmployee(decimal empId);
+    }
+
+    public class SalesWorkerRepository : BaseRepository, ISalesWorkerRepository
+    {
+        public SalesWorkerRepository(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            baseQuery = @"SELECT [Temp_ID]
+                                  ,[EmpID]
+                                  ,[sBarcode]
+                                  ,[Barcode]
+                                  ,[ItemName]
+                                  ,[SupID]
+                                  ,[QTY]
+                                  ,[CPU]
+                                  ,[RPU]
+                                  ,[VatPrcnt]
+                                  ,[CREATE_BY]
+                                  ,[CREATE_DATE]
+                                  ,[EXPIRE_DATE]
+                                  ,[CounterId]
+                                  ,[IsGift]
+                                  ,[SalesStockType]                             
+                            ,CASE WHEN (ROW_NUMBER() OVER (ORDER BY EmpID)  =1)
+	                         THEN	(SELECT COUNT(*) FROM TempSalesOrder) 
+	                         ELSE 0 END RecordCount
+                    from TempSalesOrder";
+        }
+        private Creditlimit GetCreditLimit(string cusId)
+        {
+            string query = @"SP_Get_CreditLmit '" + cusId + "' ";
+            var obj = _dal.Select<Creditlimit>(query, ref msg).FirstOrDefault();
+            return obj;
+        }
+        private GetBalance GetBalance(string cusId)
+        {
+            string query = @"SP_Get_Balance '" + cusId + "' ";
+            var obj = _dal.Select<GetBalance>(query, ref msg).FirstOrDefault();
+            return obj;
+        }
+        public Employee GetEmployeeById(decimal empId)
+        {
+            string query = "select * from Employee where EmpID='" + empId + "' and IsActive=1";
+            var data = _dal.Select<Employee>(query, ref msg).FirstOrDefault();
+            if (data != null)
+            {
+                var limit = GetCreditLimit(data.EmpID.ToString());
+                data.CreditLimit = limit.CreditLimit;
+                data.AvailableLimit = limit.AvailableLimit;
+
+                var dataImg = _dal.Select<EmployeeImage>("select * from EmployeeImage where EmpID='" + data.EmpID + "'", ref msg).FirstOrDefault();
+                if (dataImg != null)
+                {
+                    data.EmpImage = dataImg.EmpImage;
+                }
+            }
+            return data;
+        }
+
+        public List<TempSalesOrder> TempSalesOrderList(string UserId, string CounterId, string stocktype)
+        {
+            string query = "select * from TempSalesOrder where CREATE_BY='" + UserId + "' and CounterId='" + CounterId + "' and SalesStockType='" + stocktype + "'";
+            var response = _dal.Select<TempSalesOrder>(query, ref msg).ToList();
+            return response;
+        }
+        public TempSalesOrder TempSalesOrder(string UserId, string CounterId, string stocktype)
+        {
+            string query = "select * from TempSalesOrder where CREATE_BY='" + UserId + "' and CounterId='" + CounterId + "' and SalesStockType='" + stocktype + "'";
+            var response = _dal.Select<TempSalesOrder>(query, ref msg).FirstOrDefault();
+            return response;
+        }
+
+        public Employee GetEmployeeByRFId(string rfid)
+        {
+            string query = "select * from Employee where RFCardNo='" + rfid + "'";
+            var data = _dal.Select<Employee>(query, ref msg).FirstOrDefault();
+            if (data != null)
+            {
+                if (data.StaffType == "Worker" || data.StaffType == "Non-Management Staff" || data.StaffType == "Management Staff") // Management Staff added later as requirement change
+                {
+                    var limit = GetCreditLimit(data.EmpID.ToString());
+                    data.CreditLimit = limit.CreditLimit;
+                    data.AvailableLimit = limit.AvailableLimit;
+                }
+                else
+                {
+                    var balance = GetBalance(data.EmpID.ToString());
+                    data.Balance = balance.Balance;
+                    data.AvailableBalance = balance.AvaliableBalance;
+                }
+
+                var dataImg = _dal.Select<EmployeeImage>("select * from EmployeeImage where EmpID='" + data.EmpID + "'", ref msg).FirstOrDefault();
+                if (dataImg != null)
+                {
+                    data.EmpImage = dataImg.EmpImage;
+                }
+
+            }
+            return data;
+        }
+
+        public List<Ssummary> GetInvoiceByEmployee(decimal empId)
+        {
+            DateTime todate = DateTime.Now.Date;
+            string fromDate = DateTime.Parse(todate.Year.ToString() + "/" + todate.Month.ToString("00") + "/01").ToShortDateString();
+
+            string query = "select *, CAST(SaleDT as date) as SaleDTT  from Ssummary where EmpID=='" + empId + "' and SaleDTT >= '"+ fromDate + "' and SaleDT<= '"+ todate .ToShortDateString()+ "'";
+            var data = _dal.Select<Ssummary>(query, ref msg).ToList();
+
+            return data;
+        }
+    }
+}

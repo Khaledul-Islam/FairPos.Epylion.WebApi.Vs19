@@ -1,0 +1,79 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IDamageLossService
+    {
+        List<Buy> GetDamageProductsSupplier(string SupId);
+        List<Buy> GetMainProductsSupplier(string SupId, string ShopID);
+        List<Buy> GetDamageBarcodeBySbarcode(string sBarcode, decimal qty);
+        Buy GetDamageBarcodeExp(string expbarcode);
+        StockDMLTemp GetStockDMLTemp(string BarCode);
+        bool StockDMLTempSave(Buy model);
+        bool StockDMLTempDelete(StockDMLTemp model);
+        List<StockDMLTemp> GetTempDataByUser(string UserID, string ShopID);
+        List<StockDMLTemp> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID, string searchText = null);
+    }
+
+    public class DamageLossService : IDamageLossService
+    {
+        private readonly IDamageLossRepository _repo;
+
+        public DamageLossService(IDamageLossRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public List<Buy> GetDamageBarcodeBySbarcode(string sBarcode, decimal qty)
+        {
+            return _repo.GetDamageBarcodeBySbarcode(sBarcode, qty);
+        }
+
+        public Buy GetDamageBarcodeExp(string expbarcode)
+        {
+            return _repo.GetDamageBarcodeExp(expbarcode);
+        }
+
+        public List<Buy> GetDamageProductsSupplier(string SupId)
+        {
+            return _repo.GetDamageProductsSupplier(SupId);
+        }
+
+        public List<Buy> GetMainProductsSupplier(string SupId, string ShopID)
+        {
+            return _repo.GetMainProductsSupplier(SupId, ShopID);
+        }
+
+        public List<StockDMLTemp> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string ShopID, string searchText = null)
+        {
+            return _repo.GetsForDataTables(start, length, orderBy, ref msgs, UserID, ShopID, searchText);
+        }
+
+        public StockDMLTemp GetStockDMLTemp(string BarCode)
+        {
+            return _repo.GetStockDMLTemp(BarCode);
+        }
+
+        public List<StockDMLTemp> GetTempDataByUser(string UserID, string ShopID)
+        {
+            return _repo.GetTempDataByUser(UserID, ShopID);
+        }
+
+        public bool StockDMLTempDelete(StockDMLTemp model)
+        {
+            return _repo.StockDMLTempDelete(model);
+        }
+
+        public bool StockDMLTempSave(Buy model)
+        {
+            return _repo.StockDMLTempSave(model);
+        }
+    }
+}

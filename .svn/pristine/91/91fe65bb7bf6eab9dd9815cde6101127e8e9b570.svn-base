@@ -1,0 +1,38 @@
+﻿using FairPos.Epylion.Models.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    public interface IApprivalCheckRepository
+    {
+        bool RemoveTempArrival(Arrival model);
+        bool RemoveTempArrivalByID(string barCode);
+        List<TempArrival> GetTempArrival(string UserID);
+    }
+
+    //public class ApprivalCheckRepository : BaseRepository, IApprivalCheckRepository
+    //{
+    //    public ApprivalCheckRepository()
+    //    {
+
+    //    }
+    //    public List<TempArrival> GetTempArrival(string UserID)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+
+    //    public bool RemoveTempArrival(Arrival model)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+
+    //    public bool RemoveTempArrivalByID(string barCode)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
+}

@@ -1,0 +1,82 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IApprivalCheckService
+    {
+        List<Supplier> GetACSupplierDDL(string UserID, string ShopID);
+        List<BuyOrder> GetPendingPONo(string SupID, string ShopID);
+        List<BuyOrder> GetChallanDetails(string POno);
+        bool RemoveTempArrival(string UserID);
+        List<TempArrival> GetTempArrival(string UserID);
+        List<TempArrival> GetTempArrivalByChallanNo(string chln);
+        bool SaveTempArrival(List<BuyOrder> model);
+        bool SaveTempArrivalItem(TempArrival model);
+        string SaveArrival(List<TempArrival> model);
+        List<TempArrival> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string searchText = null);
+    }
+
+    public class ArrivalCheckService : IApprivalCheckService
+    {
+        private readonly IApprivalCheckRepository _repo;
+
+        public ArrivalCheckService(IApprivalCheckRepository repo)
+        {
+            _repo = repo;
+        }
+        public bool SaveTempArrivalItem(TempArrival model)
+        {
+            return _repo.SaveTempArrivalItem(model);
+        }
+        public List<BuyOrder> GetChallanDetails(string POno)
+        {
+            return _repo.GetChallanDetails(POno);
+        }
+        public List<TempArrival> GetTempArrivalByChallanNo(string chln)
+        {
+            return _repo.GetTempArrivalByChallanNo(chln);
+        }
+        
+        public List<Supplier> GetACSupplierDDL(string UserID, string ShopID)
+        {
+            return _repo.GetACSupplierDDL(UserID,ShopID);
+        }
+
+        public List<BuyOrder> GetPendingPONo(string SupID, string ShopID)
+        {
+            return _repo.GetPendingPONo(SupID, ShopID);
+        }
+
+        public List<TempArrival> GetTempArrival(string UserID)
+        {
+            return _repo.GetTempArrival(UserID);
+        }
+
+        public bool RemoveTempArrival(string UserID)
+        {
+            return _repo.RemoveTempArrival(UserID);
+        }
+
+        public bool SaveTempArrival(List<BuyOrder> model)
+        {
+            return _repo.SaveTempArrival(model);
+        }
+
+        public string SaveArrival(List<TempArrival> model)
+        {
+            return _repo.SaveArrival(model);
+        }
+
+        public List<TempArrival> GetsForDataTables(int start, int length, string orderBy, ref string msgs, string UserID, string searchText = null)
+        {
+            return _repo.GetsForDataTables(start, length, orderBy, ref msgs, UserID, searchText);
+        }
+    }
+}

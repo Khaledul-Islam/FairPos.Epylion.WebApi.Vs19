@@ -1,0 +1,100 @@
+﻿using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+
+namespace FairPos.Epyllion.Repository.Operations
+{
+    /////////////////////////////////////////////////////////////////////////////////
+    //FileName: IPurchaseOrderRepository.cs
+    //FileType: C# Source file
+    //Author : RAHEE
+    //Created On : 17/10/2021
+    //Last Modified On : 
+    //Copy Rights : MediaSoft Data System LTD
+    //Description : Interface and Class for defining database related functions
+    /////////////////////////////////////////////////////////////////////////////////
+    public interface ICircularPriceChangedRepositroy
+    {
+        List<CircularPriceChanged> GetPending();
+        CircularPriceChanged GetSingle(string id);
+        CircularPriceChangedDetail GetSingleDetails(string id);
+        bool Update(CircularPriceChangedDetail model);
+
+    }
+
+    public class CircularPriceChangedRepositroy : BaseRepository, ICircularPriceChangedRepositroy
+    {
+        public CircularPriceChangedRepositroy(IDBConnectionProvider dBConnectionProvider) : base(dBConnectionProvider)
+        {
+            //baseQuery = @"SELECT Id,CPCNo,CPCName,EffectiveDate,UserId,CreateDate,IsActivated,IsApproved,CASE WHEN (ROW_NUMBER() OVER (ORDER BY id)  =1)
+            //            THEN (SELECT COUNT(*) FROM CircularPriceChanged) ELSE 0 END RecordCount FROM CircularPriceChanged";
+            baseQuery = @"SELECT Id,CPCNo,CPCName,EffectiveDate,UserId,CreateDate,IsActivated,IsApproved FROM CircularPriceChanged";
+
+        }
+
+        public List<CircularPriceChanged> GetPending()
+        {
+            string query = baseQuery + " Where IsApproved = 0";
+
+            var data = _dal.Select<CircularPriceChanged>(query, ref msg);
+            return data;
+        }
+
+        public CircularPriceChanged GetSingle(string id)
+        {
+            string query = baseQuery + " Where CPCNo = '" + id + "'";
+            return _dal.Select<CircularPriceChanged>(query, ref msg).FirstOrDefault();
+        }
+        public CircularPriceChangedDetail GetSingleDetails(string id)
+        {
+            string query = "SELECT c.*,s.ItemName FROM CircularPriceChangedDetail c " +
+                            " INNER JOIN dbo.StyleSize s ON s.sBarcode = c.sBarcode " +
+                            " WHERE CPCNo =  '" + id + "'";
+
+            return _dal.Select<CircularPriceChangedDetail>(query, ref msg).FirstOrDefault();
+        }
+        public bool Update(CircularPriceChangedDetail model)
+        {
+
+            List<string> query = new List<string>();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(" DECLARE @ChangeRPU MONEY = " + model.CngRPU + "; ");
+            sb.AppendLine(" DECLARE @Barcode NVARCHAR(50) = '" + model.Barcode + "';");
+            sb.AppendLine(" DECLARE @sBarcode NVARCHAR(50) = '" + model.sBarcode + "';");
+            sb.AppendLine(" IF EXISTS(SELECT ISNULL(balQty,0) balQty FROM dbo.Buy WHERE BarCode = @Barcode)");
+            sb.AppendLine(" BEGIN");
+            sb.AppendLine(" UPDATE Buy SET RPU = @ChangeRPU WHERE BarCode = @Barcode;");
+            sb.AppendLine(" UPDATE CircularPriceChangedDetail SET EffectedbalQty = EffectedbalQty + (SELECT balQty FROM Buy WHERE BarCode = @Barcode) WHERE Barcode = @Barcode");
+            sb.AppendLine(" END");
+            sb.AppendLine(" IF EXISTS(SELECT ISNULL(balQty, 0) balQty FROM dbo.BuyStaff WHERE BarCode = @Barcode)");
+            sb.AppendLine(" BEGIN");
+            sb.AppendLine(" UPDATE BuyStaff SET RPU = @ChangeRPU WHERE BarCode = @Barcode;");
+            sb.AppendLine(" UPDATE CircularPriceChangedDetail SET EffectedbalQty = EffectedbalQty + (SELECT balQty FROM BuyStaff WHERE BarCode = @Barcode) WHERE Barcode = @Barcode");
+            sb.AppendLine(" END");
+            sb.AppendLine(" IF EXISTS(SELECT ISNULL(balQty, 0) balQty FROM dbo.BuyWorker WHERE BarCode = @Barcode)");
+            sb.AppendLine(" BEGIN");
+            sb.AppendLine(" UPDATE BuyWorker SET RPU = @ChangeRPU WHERE BarCode = @Barcode;");
+            sb.AppendLine(" UPDATE CircularPriceChangedDetail SET EffectedbalQty = EffectedbalQty + (SELECT balQty FROM BuyWorker WHERE BarCode = @Barcode) WHERE Barcode = @Barcode");
+            sb.AppendLine(" END");
+            sb.AppendLine(" IF EXISTS(SELECT Barcode FROM dbo.StyleSize WHERE sBarCode = @sBarcode)");
+            sb.AppendLine(" BEGIN");
+            sb.AppendLine(" UPDATE StyleSize SET RPU = @ChangeRPU WHERE sBarcode = @sBarcode");
+            sb.AppendLine(" END ");
+            sb.AppendLine(" UPDATE CircularPriceChanged SET IsActivated = 'Y', IsApproved = 1 WHERE CPCNo = '" + model.CPCNo + "'");
+
+            query.Add(sb.ToString());
+
+            return _dal.ExecuteQuery(query, ref msg);
+
+
+        }
+
+
+    }
+}

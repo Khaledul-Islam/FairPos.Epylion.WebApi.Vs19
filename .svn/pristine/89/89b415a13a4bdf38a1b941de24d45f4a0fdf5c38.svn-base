@@ -1,0 +1,30 @@
+﻿using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Sales;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Setups
+{
+    public interface ISalesStaffService
+    {
+        bool saveManagementStaffTopUp(TopUp model);
+    }
+
+    public class SalesStaffService : ISalesStaffService
+    {
+        private readonly ISalesStaffRepository _service;
+
+        public SalesStaffService(ISalesStaffRepository service)
+        {
+            _service = service;
+        }
+
+        public bool saveManagementStaffTopUp(TopUp model)
+        {
+            return _service.saveManagementStaffTopUp(model);
+        }
+    }
+}

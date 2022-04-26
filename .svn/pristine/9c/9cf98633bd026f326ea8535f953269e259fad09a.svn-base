@@ -1,0 +1,79 @@
+﻿using FairPos.Epylion.Models;
+using FairPos.Epylion.Models.Operations;
+using FairPos.Epylion.Models.Setups;
+using FairPos.Epyllion.Repository.Operations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FairPos.Epylion.Service.Operations
+{
+    public interface IQualityControlService
+    {
+        List<Supplier> QCSupplierDDL();
+        List<Arrival> GetPendingPONo(string supplierId);
+        List<TempQualityControl> GetTempQualityControl(string UserID);
+        List<TempQualityControl> GetTempQualityControlByChln(string chln);
+        List<StyleSize> GetChallanItems(string dcno);
+        List<Arrival> GetChallanDetails(string dcno, string sBarcode);
+        bool SaveTempArrival(List<Arrival> model);
+        bool DeleteTempQC(string UserID);
+        bool SaveQualityControl(List<TempQualityControl> details);
+    }
+    public class QualityControlService : IQualityControlService
+    {
+        private readonly IQualityControlRepository _repo;
+
+        public QualityControlService(IQualityControlRepository repo)
+        {
+            _repo = repo;
+        }
+
+        public bool DeleteTempQC(string UserID)
+        {
+            return _repo.DeleteTempQC(UserID);
+        }
+
+        public List<Arrival> GetChallanDetails(string dcno, string sBarcode)
+        {
+            return _repo.GetChallanDetails(dcno,sBarcode);
+        }
+
+        public List<StyleSize> GetChallanItems(string dcno)
+        {
+            return _repo.GetChallanItems(dcno);
+        }
+
+        public List<Arrival> GetPendingPONo(string supplierId)
+        {
+            return _repo.GetPendingPONo(supplierId);
+        }
+
+        public List<TempQualityControl> GetTempQualityControl(string UserID)
+        {
+            return _repo.GetTempQualityControl(UserID);
+        }
+
+        public List<TempQualityControl> GetTempQualityControlByChln(string chln)
+        {
+            return _repo.GetTempQualityControlByChln(chln);
+        }
+
+        public List<Supplier> QCSupplierDDL()
+        {
+            return _repo.QCSupplierDDL();
+        }
+
+        public bool SaveQualityControl(List<TempQualityControl> details)
+        {
+            return _repo.SaveQualityControl(details);
+        }
+
+        public bool SaveTempArrival(List<Arrival> model)
+        {
+            return _repo.SaveTempArrival(model);
+        }
+    }
+}
